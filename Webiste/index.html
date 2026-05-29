@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZENITH EMPIRE - منصة التداول والسيولة</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { background-color: #020617; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
     </style>
 </head>
-<body x-data="{ activeTab: 'dashboard', piAmount: 100, get zntOutput() { return (this.piAmount || 0) * 12.5 } }">
+<body>
 
     <nav class="border-b border-slate-900 bg-slate-900/50 backdrop-blur sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-3">
@@ -34,20 +35,20 @@
     <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
         
         <div class="space-y-2 lg:col-span-1">
-            <button @click="activeTab = 'dashboard'" :class="activeTab === 'dashboard' ? 'bg-cyan-600/10 text-cyan-400 border-cyan-500/20' : 'text-slate-400'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all border border-transparent hover:bg-slate-900 text-right">
+            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all border border-cyan-500/20 bg-cyan-600/10 text-cyan-400 text-right">
                 <i class="fas fa-chart-line w-5"></i> لوحة التحكم الإحصائية
             </button>
-            <button @click="activeTab = 'trading'" :class="activeTab === 'trading' ? 'bg-cyan-600/10 text-cyan-400 border-cyan-500/20' : 'text-slate-400'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all border border-transparent hover:bg-slate-900 text-right">
+            <button onclick="switchTab('trading')" id="btn-trading" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all border border-transparent text-slate-400 hover:bg-slate-900 text-right">
                 <i class="fas fa-exchange-alt w-5"></i> محرك تداول ZNT / PI
             </button>
-            <button @click="activeTab = 'security'" :class="activeTab === 'security' ? 'bg-cyan-600/10 text-cyan-400 border-cyan-500/20' : 'text-slate-400'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all border border-transparent hover:bg-slate-900 text-right">
+            <button onclick="switchTab('security')" id="btn-security" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all border border-transparent text-slate-400 hover:bg-slate-900 text-right">
                 <i class="fas fa-shield-alt w-5"></i> إعدادات الأمان والمحافظ
             </button>
         </div>
 
         <div class="lg:col-span-3">
             
-            <div x-show="activeTab === 'dashboard'" class="space-y-6">
+            <div id="tab-dashboard" class="tab-content active space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="bg-slate-900/50 border border-slate-900 p-5 rounded-2xl">
                         <div class="text-slate-500 text-xs font-medium mb-1">معدل العائد لـ Staking</div>
@@ -72,25 +73,25 @@
                 </div>
             </div>
 
-            <div x-show="activeTab === 'trading'" class="bg-slate-900/40 border border-slate-900 p-6 rounded-2xl space-y-6" style="display: none;">
+            <div id="tab-trading" class="tab-content bg-slate-900/40 border border-slate-900 p-6 rounded-2xl space-y-6">
                 <h3 class="text-lg font-bold text-white flex items-center gap-2">
                     <i class="fas fa-bolt text-cyan-400"></i> محرك المبادلة الفوري اللحظي (ZNT / PI)
                 </h3>
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs text-slate-400 mb-2">أدخل كمية PI المراد مبادلتها:</label>
-                        <input type="number" x-model="piAmount" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 text-white text-left font-mono" />
+                        <input type="number" id="piInput" value="100" oninput="calculateExchange()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 text-white text-left font-mono" />
                     </div>
                     <div class="bg-slate-950 border border-slate-900 p-4 rounded-xl flex justify-between items-center">
                         <div>
                             <span class="block text-xs text-slate-500 mb-1">الكمية المقدرة من توكن Zenith الممنوحة:</span>
-                            <span class="text-lg font-bold text-cyan-400" x-text="zntOutput.toLocaleString() + ' ZNT'"></span>
+                            <span class="text-lg font-bold text-cyan-400" id="zntOutput">1,250 ZNT</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div x-show="activeTab === 'security'" class="bg-slate-900/40 border border-slate-900 p-6 rounded-2xl space-y-6" style="display: none;">
+            <div id="tab-security" class="tab-content bg-slate-900/40 border border-slate-900 p-6 rounded-2xl space-y-6">
                 <h3 class="text-lg font-bold text-white flex items-center gap-2">
                     <i class="fas fa-wallet text-cyan-400"></i> المعمارية الأمنية وعناوين محافظ المايننت المربوطة
                 </h3>
@@ -113,5 +114,30 @@
         </div>
     </div>
 
+    <script>
+        function switchTab(tabId) {
+            // 1. إخفاء كافة الأقسام
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            // 2. إزالة التحديد الفاخر من كل الأزرار الجانبية
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-cyan-600/10', 'text-cyan-400', 'border-cyan-500/20');
+                btn.classList.add('text-slate-400', 'border-transparent');
+            });
+            
+            // 3. إظهار القسم المطلوب وتنشيط زرّه المقابل
+            document.getElementById('tab-' + tabId).classList.add('active');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.remove('text-slate-400', 'border-transparent');
+            activeBtn.classList.add('bg-cyan-600/10', 'text-cyan-400', 'border-cyan-500/20');
+        }
+
+        function calculateExchange() {
+            const piVal = parseFloat(document.getElementById('piInput').value) || 0;
+            const outputVal = piVal * 12.5;
+            document.getElementById('zntOutput').innerText = outputVal.toLocaleString() + " ZNT";
+        }
+    </script>
 </body>
 </html>
