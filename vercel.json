@@ -1,5 +1,6 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  "cleanUrls": true,
+  "buildCommand": null,
+  "installCommand": "echo 'Skipping Install'",
+  "framework": null
 }
