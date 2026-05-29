@@ -1,148 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zenith Empire</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#0a1628,#1a2844);color:#fff;padding-bottom:80px}
-.header{background:linear-gradient(90deg,#1a2844,#8b6914);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:1000}
-.menu-icon{font-size:28px;color:#ffd700;cursor:pointer}
-.logo{font-size:18px;font-weight:bold;color:#ffd700}
-.icon-btn{width:35px;height:35px;border-radius:50%;background:rgba(255,215,0,.2);border:2px solid #ffd700;display:flex;align-items:center;justify-content:center;font-size:16px}
-.banner{background:linear-gradient(135deg,#10b981,#059669);padding:12px 20px;text-align:center;font-weight:bold;font-size:14px}
-.container{padding:20px}
-.card{background:linear-gradient(135deg,#1e3a5f,#2d4a6f);border-radius:15px;padding:20px;margin-bottom:20px;border:1px solid rgba(255,215,0,.3)}
-.card-title{font-size:20px;font-weight:bold;color:#ffd700;margin-bottom:15px}
-.mining-box{background:linear-gradient(135deg,#8b6914,#ffd700);color:#0a1628;padding:25px;border-radius:15px;text-align:center}
-.mining-icon{font-size:60px;margin-bottom:10px;animation:spin 3s linear infinite}
-@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:15px}
-.stat-box{background:rgba(0,0,0,.3);padding:15px;border-radius:10px;text-align:center}
-.stat-value{font-size:24px;font-weight:bold;color:#10b981}
-.stat-label{font-size:12px;color:#ffd700;margin-top:5px}
-.btn{background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;padding:15px;border-radius:10px;font-size:16px;font-weight:bold;width:100%;cursor:pointer;margin-top:15px}
-.swap-box{background:rgba(0,0,0,.3);padding:15px;border-radius:10px;margin:15px 0}
-input{width:100%;padding:12px;background:rgba(255,255,255,.1);border:2px solid #10b981;border-radius:8px;color:#fff;font-size:16px;margin:10px 0}
-.ticker{background:#1a2844;padding:15px;position:fixed;bottom:0;left:0;right:0;overflow:hidden;font-size:14px;z-index:999}
-.ticker-content{display:flex;gap:30px;animation:scroll 20s linear infinite}
-@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.menu{position:fixed;left:-280px;top:0;width:280px;height:100vh;background:#1a2844;transition:left .3s;z-index:2000;padding:20px;overflow-y:auto}
-.menu.active{left:0}
-.overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);display:none;z-index:1999}
-.overlay.active{display:block}
-.menu-item{padding:15px;margin:10px 0;border-radius:8px;cursor:pointer;transition:all .3s}
-.menu-item:active{background:rgba(255,215,0,.3)}
-.menu-close{text-align:right;font-size:30px;color:#ffd700;margin-bottom:20px;cursor:pointer}
-.tx-feed{max-height:200px;overflow-y:auto}
-.tx-item{background:rgba(16,185,129,.1);padding:10px;border-radius:8px;margin-bottom:8px;font-size:13px;display:flex;justify-content:space-between}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZENITH EMPIRE - منصة التداول والسيولة</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #020617; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+    </style>
 </head>
-<body>
-<div class="header">
-<div class="menu-icon" onclick="toggleMenu()">☰</div>
-<div class="logo">⚡ ZENITH EMPIRE</div>
-<div class="icon-btn">🔔</div>
-</div>
+<body x-data="{ activeTab: 'dashboard', piAmount: 100, get zntOutput() { return (this.piAmount || 0) * 12.5 } }">
 
-<div class="banner">🌟 Professional DeFi Gateway for Pi Network</div>
+    <nav class="border-b border-slate-900 bg-slate-900/50 backdrop-blur sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="bg-gradient-to-tr from-cyan-500 to-blue-600 p-2 rounded-xl text-white animate-pulse">
+                <i class="fas fa-layer-group text-xl"></i>
+            </div>
+            <div>
+                <span class="font-black text-xl tracking-wider bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent">
+                    ZENITH EMPIRE
+                </span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 px-4 py-2 rounded-full text-xs font-mono">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
+            <span class="text-slate-400">Pi Mainnet:</span>
+            <span class="text-slate-200 text-[10px] font-bold">GD5TKV...RWTMNG</span>
+        </div>
+    </nav>
 
-<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-<div class="menu" id="menu">
-<div class="menu-close" onclick="toggleMenu()">✕</div>
-<div class="menu-item" onclick="go('index.html')">🏠 Dashboard</div>
-<div class="menu-item" onclick="go('contract.html')">📜 Contracts</div>
-<div class="menu-item" onclick="go('faq.html')">❓ FAQ</div>
-<div class="menu-item" onclick="go('about.html')">ℹ️ About</div>
-<div class="menu-item" onclick="go('terms.html')">📋 Terms</div>
-<div class="menu-item">💱 Swap</div>
-<div class="menu-item">⛏️ Mining</div>
-<div class="menu-item">👥 Community</div>
-</div>
+    <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+        
+        <div class="space-y-2 lg:col-span-1">
+            <button @click="activeTab = 'dashboard'" :class="activeTab === 'dashboard' ? 'bg-cyan-600/10 text-cyan-400 border-cyan-500/20' : 'text-slate-400'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all border border-transparent hover:bg-slate-900 text-right">
+                <i class="fas fa-chart-line w-5"></i> لوحة التحكم الإحصائية
+            </button>
+            <button @click="activeTab = 'trading'" :class="activeTab === 'trading' ? 'bg-cyan-600/10 text-cyan-400 border-cyan-500/20' : 'text-slate-400'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all border border-transparent hover:bg-slate-900 text-right">
+                <i class="fas fa-exchange-alt w-5"></i> محرك تداول ZNT / PI
+            </button>
+            <button @click="activeTab = 'security'" :class="activeTab === 'security' ? 'bg-cyan-600/10 text-cyan-400 border-cyan-500/20' : 'text-slate-400'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all border border-transparent hover:bg-slate-900 text-right">
+                <i class="fas fa-shield-alt w-5"></i> إعدادات الأمان والمحافظ
+            </button>
+        </div>
 
-<div class="container">
-<div class="mining-box">
-<div class="mining-icon">⛏️</div>
-<div style="font-size:18px;font-weight:bold">Community Staking</div>
-<div style="font-size:28px;font-weight:bold;margin:10px 0">APY: 92.5%</div>
-<div style="font-size:14px">Mine ZENITH while you HODL Pi</div>
-<div class="stats-grid">
-<div class="stat-box">
-<div class="stat-value" id="mined">847.32</div>
-<div class="stat-label">ZNT Mined</div>
-</div>
-<div class="stat-box">
-<div class="stat-value">24h</div>
-<div class="stat-label">Active</div>
-</div>
-</div>
-</div>
+        <div class="lg:col-span-3">
+            
+            <div x-show="activeTab === 'dashboard'" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-slate-900/50 border border-slate-900 p-5 rounded-2xl">
+                        <div class="text-slate-500 text-xs font-medium mb-1">معدل العائد لـ Staking</div>
+                        <div class="text-2xl font-bold text-emerald-400">up to 24% APY</div>
+                    </div>
+                    <div class="bg-slate-900/50 border border-slate-900 p-5 rounded-2xl">
+                        <div class="text-slate-500 text-xs font-medium mb-1">التغطية الإقليمية</div>
+                        <div class="text-2xl font-bold text-cyan-400">54 دولة أفريقية</div>
+                    </div>
+                    <div class="bg-slate-900/50 border border-slate-900 p-5 rounded-2xl">
+                        <div class="text-slate-500 text-xs font-medium mb-1">حالة الجدار الناري المالي</div>
+                        <div class="text-sm font-mono text-slate-300 mt-1">Mainnet Protected</div>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 p-6 rounded-2xl">
+                    <h2 class="text-xl font-bold mb-3 flex items-center gap-2 text-white">
+                        <i class="fas fa-globe text-cyan-400"></i> الرؤية الاجتماعية والبيئية لمنصة Baya Empire
+                    </h2>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        تأسست المنصة لدمج حلول تداول العملات الرقمية المتقدمة مع الأنظمة البيئية والاجتماعية المستدامة في القارة الأفريقية وتوفير سيولة ومبادلات حقيقية لعملة Pi عبر شبكة المايننت الرسمية.
+                    </p>
+                </div>
+            </div>
 
-<div class="card">
-<div class="card-title">💱 Instant Swap</div>
-<div style="background:rgba(16,185,129,.2);padding:10px;border-radius:8px;margin-bottom:15px">
-🛡️ KYC Verified • 🔒 Mainnet Secure
-</div>
-<div class="swap-box">
-<input type="number" placeholder="Enter Pi amount" id="pi" oninput="calc()">
-<div style="text-align:center;font-size:24px;margin:10px 0">⇅</div>
-<input type="number" placeholder="You receive ZNT" id="znt" readonly>
-</div>
-<div style="text-align:center;padding:10px;background:rgba(16,185,129,.1);border-radius:8px">
-Rate: 1 PI = <span style="color:#10b981;font-weight:bold">$0.045</span>
-</div>
-<button class="btn" onclick="swap()">🔒 Execute Swap</button>
-</div>
+            <div x-show="activeTab === 'trading'" class="bg-slate-900/40 border border-slate-900 p-6 rounded-2xl space-y-6" style="display: none;">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fas fa-bolt text-cyan-400"></i> محرك المبادلة الفوري اللحظي (ZNT / PI)
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-2">أدخل كمية PI المراد مبادلتها:</label>
+                        <input type="number" x-model="piAmount" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 text-white text-left font-mono" />
+                    </div>
+                    <div class="bg-slate-950 border border-slate-900 p-4 rounded-xl flex justify-between items-center">
+                        <div>
+                            <span class="block text-xs text-slate-500 mb-1">الكمية المقدرة من توكن Zenith الممنوحة:</span>
+                            <span class="text-lg font-bold text-cyan-400" x-text="zntOutput.toLocaleString() + ' ZNT'"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-<div class="card">
-<div class="card-title">👥 Community Stats</div>
-<div class="stats-grid">
-<div class="stat-box">
-<div class="stat-value" id="users">14,821</div>
-<div class="stat-label">Active Users</div>
-</div>
-<div class="stat-box">
-<div class="stat-value">2.4M</div>
-<div class="stat-label">Pi Staked</div>
-</div>
-<div class="stat-box">
-<div class="stat-value">$1.2M</div>
-<div class="stat-label">TVL</div>
-</div>
-<div class="stat-box">
-<div class="stat-value">94/100</div>
-<div class="stat-label">CertiK</div>
-</div>
-</div>
-</div>
+            <div x-show="activeTab === 'security'" class="bg-slate-900/40 border border-slate-900 p-6 rounded-2xl space-y-6" style="display: none;">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fas fa-wallet text-cyan-400"></i> المعمارية الأمنية وعناوين محافظ المايننت المربوطة
+                </h3>
+                <div class="space-y-3 font-mono text-xs text-left">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-900">
+                        <span class="text-slate-500 block text-right">Incoming Multisig 1:</span>
+                        <span class="text-slate-300 break-all select-all">GCMRPF2KNTNFSNB7LIX6KDWKLVGMGNZT2ACHCMF2R3OX5YZFSQPYTEP6</span>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-900">
+                        <span class="text-slate-500 block text-right">Incoming Multisig 2:</span>
+                        <span class="text-slate-300 break-all select-all">GDPMNWGH6XOT2FEF7KR7TQO3K2IRQOTX4ONZBOCRD6QY73OXDLEDPKEX</span>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-900 border-r-2 border-r-cyan-500">
+                        <span class="text-cyan-400 block font-bold text-right">Active Outgoing User-Payout:</span>
+                        <span class="text-slate-200 break-all font-bold select-all">GD5TKVTXMHRL3FP66YGRR4FXNKIP35QAG72S652LCDOSDVCARYRWTMNG</span>
+                    </div>
+                </div>
+            </div>
 
-<div class="card">
-<div class="card-title">⚡ Live Transactions</div>
-<div class="tx-feed" id="feed"></div>
-</div>
-</div>
+        </div>
+    </div>
 
-<div class="ticker">
-<div class="ticker-content">
-<span>ZNT/PI: <strong style="color:#10b981">$0.045</strong> ▲2.45%</span>
-<span>PI/USD: <strong style="color:#10b981">$0.62</strong> ▲1.23%</span>
-<span>Vol: <strong style="color:#ffd700">$847K</strong></span>
-<span>ZNT/PI: <strong style="color:#10b981">$0.045</strong> ▲2.45%</span>
-<span>PI/USD: <strong style="color:#10b981">$0.62</strong> ▲1.23%</span>
-<span>Vol: <strong style="color:#ffd700">$847K</strong></span>
-</div>
-</div>
-
-<script>
-function toggleMenu(){document.getElementById('menu').classList.toggle('active');document.getElementById('overlay').classList.toggle('active')}
-function go(p){window.location.href=p}
-function calc(){const p=document.getElementById('pi').value;document.getElementById('znt').value=p?(p/.045).toFixed(6):''}
-function swap(){const p=document.getElementById('pi').value;if(!p||p<=0){alert('⚠️ Enter Pi amount');return}alert('✅ Swap initiated!\n\n'+p+' Pi → '+document.getElementById('znt').value+' ZNT')}
-function addTx(){const f=document.getElementById('feed');const a=[12.5,45.8,89.3,234.7,156.2][Math.floor(Math.random()*5)];const h='0x'+Math.random().toString(16).substr(2,8);const d=document.createElement('div');d.className='tx-item';d.innerHTML='<div><div style="font-weight:bold">🔄 Swap</div><div style="font-size:11px;opacity:.7">'+h+'...</div></div><div style="text-align:right"><div style="color:#10b981;font-weight:bold">'+a+' Pi</div><div style="font-size:11px">just now</div></div>';f.insertBefore(d,f.firstChild);if(f.children.length>5)f.removeChild(f.lastChild)}
-setInterval(()=>{document.getElementById('users').textContent=(14821+Math.floor(Math.random()*100)).toLocaleString();document.getElementById('mined').textContent=(847.32+Math.random()*5).toFixed(2)},5000);
-setInterval(addTx,8000);
-for(let i=0;i<3;i++)setTimeout(addTx,i*2000);
-</script>
 </body>
 </html>
