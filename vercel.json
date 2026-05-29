@@ -1,6 +1,3 @@
 {
-  "cleanUrls": true,
-  "buildCommand": null,
-  "installCommand": "echo 'Skipping Install'",
-  "framework": null
+  "cleanUrls": true
 }
