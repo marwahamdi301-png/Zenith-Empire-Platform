@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FAQ</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#0a1628,#1a2844);color:#fff;padding:20px}
+.header{background:linear-gradient(90deg,#1a2844,#8b6914);padding:15px;border-radius:10px;margin-bottom:20px;display:flex;align-items:center;gap:15px}
+.back{font-size:24px;color:#ffd700;text-decoration:none}
+h1{color:#ffd700;text-align:center;margin-bottom:20px}
+.item{background:rgba(30,58,95,.5);border-radius:10px;margin-bottom:15px;overflow:hidden}
+.q{padding:15px;background:rgba(16,185,129,.1);font-weight:bold;cursor:pointer}
+.a{padding:0 15px;max-height:0;overflow:hidden;transition:all .3s}
+.a.active{padding:15px;max-height:500px}
+</style>
+</head>
+<body>
+<div class="header">
+<a href="index.html" class="back">←</a>
+<div style="font-size:20px;font-weight:bold;color:#ffd700">FAQ</div>
+</div>
+
+<h1>❓ Frequently Asked Questions</h1>
+
+<div class="item">
+<div class="q" onclick="toggle(this)">What is Zenith Empire?</div>
+<div class="a">DeFi platform for Pi Network with swapping, staking, mining. CertiK audited.</div>
+</div>
+
+<div class="item">
+<div class="q" onclick="toggle(this)">Is it safe?</div>
+<div class="a">Yes! CertiK audited (94/100), 256-bit encryption, liquidity locked 365 days.</div>
+</div>
+
+<div class="item">
+<div class="q" onclick="toggle(this)">What are fees?</div>
+<div class="a">Swap: 0.1% | Staking: FREE | Withdrawal: Network fee only (~0.001 Pi)</div>
+</div>
+
+<div class="item">
+<div class="q" onclick="toggle(this)">How to contact support?</div>
+<div class="a">Email: support@zenithempire.pi | Telegram: @ZenithEmpireSupport | 24/7</div>
+</div>
+
+<div class="item">
+<div class="q" onclick="toggle(this)">What is the current APY?</div>
+<div class="a">Current APY: 92.5% (variable based on total staked amount)</div>
+</div>
+
+<script>
+function toggle(e){e.nextElementSibling.classList.toggle('active')}
+</script>
+</body>
+</html>
