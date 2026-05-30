@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { WalletConnect } from './WalletConnect';
 
 const wallets = [
-  { name: 'Primary Wallet', address: 'ILGCMRPF2KNTNFSNB7LIX6KDWKLVGMGNZT2ACHCMF2R3OX5YZFSQPYTEP6', color: 'from-blue-500 to-cyan-500', balance: '10,234.50 XLM' },
+  { name: 'Primary Wallet', address: 'GCMRPF2KNTNFSNB7LIX6KDWKLVGMGNZT2ACHCMF2R3OX5YZFSQPYTEP6', color: 'from-blue-500 to-cyan-500', balance: '10,234.50 XLM' },
   { name: 'Secondary Wallet', address: 'GDPMNWGH6XOT2FEF7KR7TQO3K2IRQOTX4ONZBOCRD6QY73OXDLEDPKEX', color: 'from-purple-500 to-pink-500', balance: '5,120.25 XLM' },
   { name: 'Rewards Wallet', address: 'GDVTACGR5QEVND7LW56QLQAXYBWXVAZOBRUCZ3Z2ACRKKZL3VUHG4VYX', color: 'from-green-500 to-emerald-500', balance: '2,850.75 XLM' },
 ];
