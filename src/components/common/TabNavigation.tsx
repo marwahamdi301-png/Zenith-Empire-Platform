@@ -30,7 +30,7 @@ export function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
                   flex items-center gap-2 px-6 py-4 text-sm font-medium
                   border-b-2 transition-all duration-200 whitespace-nowrap
                   ${isActive
-                    ? 'border-[var(--color-primary)] text-[var(--color-primary)]'
+                    ? 'border-primary text-primary'
                     : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-700'
                   }
                 `}

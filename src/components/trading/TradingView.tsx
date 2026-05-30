@@ -21,13 +21,14 @@ export function TradingView() {
         {tradingPairs.map((pair) => {
           const isPositive = pair.change.startsWith('+');
           const isSelected = selectedPair.pair === pair.pair;
+          
           return (
             <button
               key={pair.pair}
               onClick={() => setSelectedPair(pair)}
               className={`bg-gray-800/50 backdrop-blur-sm border rounded-xl p-4 text-left transition-all ${
-                isSelected
-                  ? 'border-primary shadow-lg shadow-primary/20'
+                isSelected 
+                  ? 'border-primary shadow-lg shadow-primary/20' 
                   : 'border-gray-700 hover:border-gray-600'
               }`}
             >
@@ -69,6 +70,7 @@ export function TradingView() {
                 ))}
               </div>
             </div>
+            
             <div>
               <div className="text-sm text-gray-400 mb-2">Bids (Buy)</div>
               <div className="space-y-1">
@@ -86,6 +88,7 @@ export function TradingView() {
         {/* Order Form */}
         <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
           <h2 className="text-xl font-bold text-white mb-4">Place Order</h2>
+          
           <div className="flex gap-2 mb-6">
             <button
               onClick={() => setOrderType('buy')}
@@ -95,7 +98,8 @@ export function TradingView() {
                   : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
               }`}
             >
-              <ArrowUpCircle className="w-5 h-5" /> Buy
+              <ArrowUpCircle className="w-5 h-5" />
+              Buy
             </button>
             <button
               onClick={() => setOrderType('sell')}
@@ -105,7 +109,8 @@ export function TradingView() {
                   : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
               }`}
             >
-              <ArrowDownCircle className="w-5 h-5" /> Sell
+              <ArrowDownCircle className="w-5 h-5" />
+              Sell
             </button>
           </div>
 
@@ -120,6 +125,7 @@ export function TradingView() {
                 className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-primary focus:outline-none"
               />
             </div>
+
             <div>
               <label className="block text-sm text-gray-400 mb-2">Amount (XLM)</label>
               <input
@@ -137,6 +143,10 @@ export function TradingView() {
                 <span className="text-white font-bold">
                   {price && amount ? `$${(parseFloat(price) * parseFloat(amount)).toFixed(2)}` : '$0.00'}
                 </span>
+              </div>
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>Fee (0.1%)</span>
+                <span>{price && amount ? `$${(parseFloat(price) * parseFloat(amount) * 0.001).toFixed(2)}` : '$0.00'}</span>
               </div>
             </div>
 

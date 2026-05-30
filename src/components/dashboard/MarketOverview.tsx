@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, Zap } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
 const topGainers = [
   { symbol: 'XLM', name: 'Stellar', price: 0.1234, change: '+15.3%', volume: '$1.2M' },

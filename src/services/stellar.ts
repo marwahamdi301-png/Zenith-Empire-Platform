@@ -6,7 +6,18 @@ export const getStellarServer = (): StellarSdk.Horizon.Server => {
 };
 
 export const getNetworkPassphrase = (): string => {
-  return ENV.STELLAR.NETWORK === 'mainnet' ? StellarSdk.Networks.PUBLIC : StellarSdk.Networks.TESTNET;
+  return ENV.STELLAR.NETWORK === 'mainnet'
+    ? StellarSdk.Networks.PUBLIC
+    : StellarSdk.Networks.TESTNET;
+};
+
+export const isValidStellarAddress = (address: string): boolean => {
+  try {
+    StellarSdk.StrKey.decodeEd25519PublicKey(address);
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 export const formatStellarAmount = (amount: string | number): string => {

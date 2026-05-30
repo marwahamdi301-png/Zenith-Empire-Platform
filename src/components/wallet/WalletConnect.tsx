@@ -8,7 +8,6 @@ export function WalletConnect() {
   const handleConnect = async () => {
     setLoading(true);
     try {
-      // Simulate connection delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       setConnected(true);
     } catch (error) {

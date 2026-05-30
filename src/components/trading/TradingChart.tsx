@@ -32,11 +32,19 @@ export function TradingChart({ symbol = 'BINANCE:XLMUSDT' }: TradingChartProps) 
           toolbar_bg: '#1a1a2e',
           enable_publishing: false,
           hide_side_toolbar: false,
+          allow_symbol_change: true,
           container_id: 'tradingview_chart',
+          studies: ['RSI@tv-basicstudies', 'MASimple@tv-basicstudies'],
         });
       }
     };
     document.head.appendChild(script);
+
+    return () => {
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
+    };
   }, [symbol]);
 
   return (

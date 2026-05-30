@@ -5,10 +5,13 @@ export class FreighterService {
 
   async connect(): Promise<string> {
     try {
-      // Placeholder for Freighter integration
-      return 'GXXX...XXX';
+      const isAvailable = await this.checkConnection();
+      if (!isAvailable) {
+        throw new Error('Freighter wallet not installed');
+      }
+      return 'GXXX...DEMO';
     } catch (error) {
-      throw new Error('Freighter wallet not available');
+      throw new Error('Failed to connect to Freighter wallet');
     }
   }
 }

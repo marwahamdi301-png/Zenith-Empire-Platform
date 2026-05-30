@@ -1,4 +1,4 @@
-import { Wallet, PieChart, Download, Upload } from 'lucide-react';
+import { PieChart, Download, Upload } from 'lucide-react';
 
 const holdings = [
   { asset: 'XLM', amount: 10234.5, value: 1262.88, allocation: 35, color: 'bg-blue-500' },
