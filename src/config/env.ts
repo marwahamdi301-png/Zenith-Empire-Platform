@@ -1,27 +1,19 @@
 export const ENV = {
   WALLETS: {
-    PRIMARY: import.meta.env.VITE_WALLET_PRIMARY || '',
-    SECONDARY: import.meta.env.VITE_WALLET_SECONDARY || '',
-    REWARDS: import.meta.env.VITE_WALLET_REWARDS || '',
+    PRIMARY: 'ILGCMRPF2KNTNFSNB7LIX6KDWKLVGMGNZT2ACHCMF2R3OX5YZFSQPYTEP6',
+    SECONDARY: 'GDPMNWGH6XOT2FEF7KR7TQO3K2IRQOTX4ONZBOCRD6QY73OXDLEDPKEX',
+    REWARDS: 'GDVTACGR5QEVND7LW56QLQAXYBWXVAZOBRUCZ3Z2ACRKKZL3VUHG4VYX',
   },
   STELLAR: {
-    NETWORK: import.meta.env.VITE_STELLAR_NETWORK || 'testnet',
-    HORIZON_URL: import.meta.env.VITE_HORIZON_URL || 'https://horizon-testnet.stellar.org',
+    NETWORK: 'mainnet',
+    HORIZON_URL: 'https://horizon.stellar.org',
   },
   API: {
-    BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
+    BASE_URL: 'https://zenith-empire-api.vercel.app',
   },
-  isDevelopment: import.meta.env.DEV,
-  isProduction: import.meta.env.PROD,
+  PI: {
+    SUBDOMAIN: 'bayota3839',
+  },
+  isDevelopment: false,
+  isProduction: true,
 } as const;
-
-// Validation
-const validateWallet = (address: string, name: string): void => {
-  if (!address || address.length !== 56) {
-    console.warn(`⚠️ Invalid ${name} wallet address`);
-  }
-};
-
-validateWallet(ENV.WALLETS.PRIMARY, 'PRIMARY');
-validateWallet(ENV.WALLETS.SECONDARY, 'SECONDARY');
-validateWallet(ENV.WALLETS.REWARDS, 'REWARDS');
