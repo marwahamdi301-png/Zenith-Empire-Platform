@@ -11,6 +11,12 @@ export const formatPercentage = (value: number): string => {
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
 };
 
+// ✅ تنسيق احترافي: أول 6 + ... + آخر 6 (بدون مسافات)
+export const truncateStellarAddress = (address: string): string => {
+  if (!address || address.length < 12) return address;
+  return `${address.slice(0, 6)}...${address.slice(-6)}`;
+};
+
 export const formatDate = (date: string | Date): string => {
   return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
@@ -19,9 +25,4 @@ export const formatDate = (date: string | Date): string => {
     hour: '2-digit',
     minute: '2-digit',
   }).format(new Date(date));
-};
-
-export const truncateAddress = (address: string, chars = 6): string => {
-  if (address.length <= chars * 2) return address;
-  return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 };

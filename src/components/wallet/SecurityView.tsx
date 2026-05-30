@@ -1,6 +1,7 @@
 import { Wallet, Copy, ExternalLink, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 import { WalletConnect } from './WalletConnect';
+import { truncateStellarAddress } from '../../utils/format';
 
 const wallets = [
   { 
@@ -26,18 +27,18 @@ const wallets = [
 export function SecurityView() {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
-  const copyToClipboard = (text: string, index: number) => {
-    navigator.clipboard.writeText(text);
-    setCopiedIndex(index);
-    setTimeout(() => setCopiedIndex(null), 2000);
-  };
-
-  const truncateAddress = (address: string) => {
-    return `${address.slice(0, 8)}...${address.slice(-8)}`;
+  const copyToClipboard = async (text: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    } catch (err) {
+      console.error('Copy failed:', err);
+    }
   };
 
   return (
-    <div className="space-y-6 animate-slide-in">
+    <div className="space-y-6 animate-slide-in pb-[env(safe-area-inset-bottom,16px)]">
       {/* Security Warning */}
       <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-6">
         <div className="flex items-start gap-3">
@@ -77,14 +78,17 @@ export function SecurityView() {
             <div className="bg-gray-900/50 rounded-lg p-3 mb-4">
               <p className="text-xs text-gray-400 mb-1">Public Address</p>
               <p className="text-sm text-white font-mono break-all">
-                {truncateAddress(wallet.address)}
+                {truncateStellarAddress(wallet.address)}
               </p>
             </div>
 
             <div className="flex gap-2">
               <button
                 onClick={() => copyToClipboard(wallet.address, index)}
-                className="flex-1 flex items-center justify-center gap-2 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm text-white transition-all"
+                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm text-white transition-all
+                  ${copiedIndex === index 
+                    ? 'bg-green-500/20 text-green-400 hover:scale-[1.02] active:scale-[0.98]' 
+                    : 'bg-gray-700 hover:bg-gray-600 hover:scale-[1.02] active:scale-[0.98]'}`}
               >
                 {copiedIndex === index ? (
                   <>
@@ -102,7 +106,8 @@ export function SecurityView() {
                 href={`https://stellar.expert/explorer/public/account/${wallet.address}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-blue-500 rounded-lg text-sm text-white transition-all"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-blue-500 
+                           rounded-lg text-sm text-white transition-all hover:scale-[1.05] active:scale-[0.95]"
               >
                 <ExternalLink className="w-4 h-4" />
               </a>
