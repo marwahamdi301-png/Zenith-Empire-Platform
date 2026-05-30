@@ -1,4 +1,6 @@
 import { TrendingUp, TrendingDown, DollarSign, Activity, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { MarketOverview } from './MarketOverview';
+import { PortfolioManager } from './PortfolioManager';
 
 const stats = [
   {
@@ -60,7 +62,6 @@ export function DashboardView() {
               key={stat.label}
               className="relative overflow-hidden bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:border-primary/50 transition-all group"
             >
-              {/* Gradient Background */}
               <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.color} opacity-10 blur-3xl group-hover:opacity-20 transition-opacity`}></div>
               
               <div className="relative">
@@ -104,12 +105,11 @@ export function DashboardView() {
             </div>
           </div>
           
-          {/* Mock Chart */}
           <div className="h-64 bg-gray-900/50 rounded-lg p-4 flex items-end justify-between gap-2">
             {[65, 78, 45, 89, 67, 92, 54, 88, 76, 95, 68, 82].map((height, i) => (
-              <div key={i} className="flex-1 flex flex-col justify-end">
+              <div key={i} className="flex-1 flex flex-col justify-end group">
                 <div
-                  className="bg-gradient-to-t from-primary to-purple-500 rounded-t transition-all hover:opacity-80"
+                  className="bg-gradient-to-t from-primary to-purple-500 rounded-t transition-all hover:opacity-80 group-hover:scale-105"
                   style={{ height: `${height}%` }}
                 ></div>
               </div>
@@ -122,10 +122,10 @@ export function DashboardView() {
           <h2 className="text-xl font-bold text-white mb-4">Recent Trades</h2>
           <div className="space-y-3">
             {recentTrades.map((trade, i) => (
-              <div key={i} className="bg-gray-900/50 rounded-lg p-4 hover:bg-gray-900/80 transition-all">
+              <div key={i} className="bg-gray-900/50 rounded-lg p-4 hover:bg-gray-900/80 transition-all cursor-pointer">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-bold text-white">{trade.pair}</span>
-                  <span className={`text-xs px-2 py-1 rounded ${
+                  <span className={`text-xs px-2 py-1 rounded font-medium ${
                     trade.type === 'buy' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
                   }`}>
                     {trade.type.toUpperCase()}
@@ -137,7 +137,7 @@ export function DashboardView() {
                 </div>
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-gray-500">{trade.time}</span>
-                  <span className={trade.profit.startsWith('+') ? 'text-green-400' : 'text-red-400'}>
+                  <span className={`font-medium ${trade.profit.startsWith('+') ? 'text-green-400' : 'text-red-400'}`}>
                     {trade.profit}
                   </span>
                 </div>
@@ -146,6 +146,12 @@ export function DashboardView() {
           </div>
         </div>
       </div>
+
+      {/* Market Overview */}
+      <MarketOverview />
+
+      {/* Portfolio Manager */}
+      <PortfolioManager />
     </div>
   );
 }

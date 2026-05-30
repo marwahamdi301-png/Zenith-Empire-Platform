@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { Zap } from 'lucide-react';
+import { Zap, Settings } from 'lucide-react';
 import { TabNavigation, type TabType } from './components/common/TabNavigation';
+import { PriceTicker } from './components/common/PriceTicker';
+import { NotificationCenter } from './components/common/NotificationCenter';
 import { DashboardView } from './components/dashboard/DashboardView';
 import { TradingView } from './components/trading/TradingView';
 import { SecurityView } from './components/wallet/SecurityView';
@@ -28,7 +30,7 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] rounded-lg">
+              <div className="p-2 bg-gradient-to-br from-primary to-secondary rounded-lg animate-pulse-glow">
                 <Zap className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -40,13 +42,23 @@ function App() {
             <div className="flex items-center gap-4">
               <div className="hidden sm:block text-right">
                 <p className="text-sm font-medium text-white">$12,458.50</p>
-                <p className="text-xs text-gray-400">Total Balance</p>
+                <p className="text-xs text-green-400">+12.5% (24h)</p>
               </div>
-              <div className="w-2 h-2 bg-[var(--color-success)] rounded-full animate-pulse"></div>
+              <NotificationCenter />
+              <button className="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-all">
+                <Settings className="w-5 h-5 text-white" />
+              </button>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="hidden sm:inline text-xs text-gray-400">Live</span>
+              </div>
             </div>
           </div>
         </div>
       </header>
+
+      {/* Price Ticker */}
+      <PriceTicker />
 
       {/* Tab Navigation */}
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
@@ -64,13 +76,16 @@ function App() {
               © 2024 Zenith Empire. Powered by Stellar Network.
             </p>
             <div className="flex items-center gap-6">
-              <a href="#" className="text-sm text-gray-400 hover:text-[var(--color-primary)] transition-colors">
+              <a href="#" className="text-sm text-gray-400 hover:text-primary transition-colors">
                 Docs
               </a>
-              <a href="#" className="text-sm text-gray-400 hover:text-[var(--color-primary)] transition-colors">
+              <a href="#" className="text-sm text-gray-400 hover:text-primary transition-colors">
+                API
+              </a>
+              <a href="#" className="text-sm text-gray-400 hover:text-primary transition-colors">
                 Support
               </a>
-              <a href="https://github.com/marwahamdi301-png/Zenith-Empire-Platform" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-[var(--color-primary)] transition-colors">
+              <a href="https://github.com/marwahamdi301-png/Zenith-Empire-Platform" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-primary transition-colors">
                 GitHub
               </a>
             </div>
