@@ -15,3 +15,9 @@ import { StellarTradingController } from '../controllers/stellar-trading.control
 const stellarController = new StellarTradingController();
 router.post('/execute', stellarController.executeTrade);
 router.get('/balances', stellarController.getBalances);
+
+import { StellarTradingController } from '../controllers/stellar-trading.controller.js';
+
+const stellarController = new StellarTradingController();
+router.post('/execute', stellarController.executeTrade);
+router.get('/balances', stellarController.getBalances);

@@ -37,3 +37,33 @@ pnpm-debug.log*
 
 # Build artifacts
 *.tsbuildinfo
+
+# Secret keys (NEVER COMMIT!)
+.env.local
+*.key
+*.pem
+secrets/
+
+# CRITICAL SECURITY FILES
+.env.local
+.env.production
+*.key
+*.pem
+secrets/
+private/
+STELLAR_SECRET_*
+PI_API_KEY
+JWT_SECRET
+.env
+.env*
+
+# CRITICAL SECURITY FILES
+.env.local
+.env.production
+*.key
+*.pem
+secrets/
+private/
+STELLAR_SECRET_*
+PI_API_KEY
+JWT_SECRET
