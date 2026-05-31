@@ -1,8 +1,8 @@
 // src/services/zenith-api.ts
-// ✅ Frontend client — يتصل بالخادم فقط، لا يحمل أي مفتاح سري
+// ✅ النسخة المحدثة لبيئة Pi Browser — رابط مطلق ثابت
 
-// ─── نقطة الـ API (نفس النطاق = لا CORS مشاكل) ───────────────────
-const API_BASE = '/api';
+// ─── تحديد النطاق الثابت لمنع تعارض متصفحات الـ Web3 ───────────────────
+const API_BASE = 'https://zenith-empire-cyan.vercel.app/api';
 
 // ─── الأنواع ──────────────────────────────────────────────────────
 export interface SendResult {
@@ -74,7 +74,7 @@ export async function adminAction(
   return data;
 }
 
-// ─── جلب رصيد Stellar (قراءة فقط — آمن في frontend) ─────────────
+// ─── جلب رصيد Stellar (قراءة فقط) ─────────────────────────────
 export async function getStellarBalances(address: string) {
   const res = await fetch(
     `https://horizon.stellar.org/accounts/${address}`,
