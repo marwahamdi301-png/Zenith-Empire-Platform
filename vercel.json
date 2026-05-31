@@ -28,7 +28,7 @@
       "source": "/(.*)",
       "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Content-Security-Policy", "value": "frame-ancestors 'self' https://*.pinetwork.com https://minepi.com;" }
+        { "key": "Content-Security-Policy", "value": "frame-ancestors 'self' https://*.pinetwork.com https://minepi.com https://*.vercel.app;" }
       ]
     }
   ],
