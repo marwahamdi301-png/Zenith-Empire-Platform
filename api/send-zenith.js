@@ -1,7 +1,7 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 
-const HORIZON_URL        = 'https://horizon.stellar.org';
-const NETWORK_PASSPHRASE = StellarSdk.Networks.PUBLIC;
+const HORIZON_URL        = 'https://horizon-testnet.stellar.org';
+const NETWORK_PASSPHRASE = StellarSdk.Networks.TESTNET;
 const MAX_AMOUNT         = 1.0;
 const claimLog           = new Map();
 
