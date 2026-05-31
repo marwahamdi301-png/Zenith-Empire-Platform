@@ -1,47 +1,75 @@
-import { LayoutDashboard, TrendingUp, Shield } from 'lucide-react';
+// src/components/common/TabNavigation.tsx
+import { useState } from 'react';
+import { LayoutDashboard, ArrowLeftRight, ShieldAlert, Cpu, ShieldCheck } from 'lucide-react';
+import { DashboardView } from '../dashboard/DashboardView';
+import { TradingView } from '../trading/TradingView';
+import { SecurityView } from '../wallet/SecurityView';
+import { MobileMining } from '../mining/MobileMining';
+import { AdminDashboard } from '../admin/AdminDashboard';
 
-export type TabType = 'dashboard' | 'trading' | 'security';
+type TabType = 'dashboard' | 'trading' | 'security' | 'mining' | 'admin';
 
-interface TabNavigationProps {
-  activeTab: TabType;
-  onTabChange: (tab: TabType) => void;
-}
+export function TabNavigation() {
+  const [activeTab, setActiveTab] = useState<TabType>('dashboard');
 
-const tabs = [
-  { id: 'dashboard' as TabType, label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'trading' as TabType, label: 'Trade Engine', icon: TrendingUp },
-  { id: 'security' as TabType, label: 'Security', icon: Shield },
-];
-
-export function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
   return (
-    <nav className="border-b border-gray-800 bg-gray-900/50 backdrop-blur-sm sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex space-x-1 overflow-x-auto scrollbar-hide">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            
-            return (
-              <button
-                key={tab.id}
-                onClick={() => onTabChange(tab.id)}
-                className={`
-                  flex items-center gap-2 px-6 py-4 text-sm font-medium
-                  border-b-2 transition-all duration-200 whitespace-nowrap
-                  ${isActive
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-700'
-                  }
-                `}
-              >
-                <Icon className="w-5 h-5" />
-                <span className="hidden sm:inline">{tab.label}</span>
-              </button>
-            );
-          })}
+    <div className="flex flex-col min-h-screen bg-gray-950 text-white">
+      {/* المحتوى المتغير بناءً على التبويب النشط */}
+      <main className="flex-1 pb-24">
+        {activeTab === 'dashboard' && <DashboardView />}
+        {activeTab === 'trading'   && <TradingView />}
+        {activeTab === 'security'  && <SecurityView />}
+        {activeTab === 'mining'    && <MobileMining />}
+        {activeTab === 'admin'     && <AdminDashboard />}
+      </main>
+
+      {/* شريط التنقل السفلي المثبت - Mobile First */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-gray-900/90 backdrop-blur-md border-t border-gray-800 px-2 py-2 z-50">
+        <div className="max-w-lg mx-auto flex justify-around items-center">
+          
+          <button onClick={() => setActiveTab('dashboard')}
+            className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${
+              activeTab === 'dashboard' ? 'text-yellow-400' : 'text-gray-400 hover:text-gray-200'
+            }`}>
+            <LayoutDashboard className="w-5 h-5" />
+            <span>الرئيسية</span>
+          </button>
+
+          <button onClick={() => setActiveTab('trading')}
+            className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${
+              activeTab === 'trading' ? 'text-yellow-400' : 'text-gray-400 hover:text-gray-200'
+            }`}>
+            <ArrowLeftRight className="w-5 h-5" />
+            <span>التداول</span>
+          </button>
+
+          <button onClick={() => setActiveTab('mining')}
+            className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${
+              activeTab === 'mining' ? 'text-yellow-400' : 'text-gray-400 hover:text-gray-200'
+            }`}>
+            <Cpu className="w-5 h-5" />
+            <span>التعدين</span>
+          </button>
+
+          <button onClick={() => setActiveTab('security')}
+            className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${
+              activeTab === 'security' ? 'text-yellow-400' : 'text-gray-400 hover:text-gray-200'
+            }`}>
+            <ShieldAlert className="w-5 h-5" />
+            <span>الأمان</span>
+          </button>
+
+          {/* تبويب الإدارة - يفضل برمجته لاحقاً ليظهر فقط عند شروط معينة */}
+          <button onClick={() => setActiveTab('admin')}
+            className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${
+              activeTab === 'admin' ? 'text-orange-400' : 'text-gray-500 hover:text-gray-300'
+            }`}>
+            <ShieldCheck className="w-5 h-5" />
+            <span>الإدارة</span>
+          </button>
+
         </div>
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 }
