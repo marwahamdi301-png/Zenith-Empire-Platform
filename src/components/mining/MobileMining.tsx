@@ -69,7 +69,12 @@ export function MobileMining() {
       setIsActive(false);
       setProgress(0);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'خطأ في الإرسال');
+      const errMsg = err instanceof Error ? err.message : 'خطأ في الإرسال';
+      if (errMsg.includes('Trustline') || errMsg.includes('needsTrustline')) {
+        setError('⚠️ محفظتك لا تدعم ZENITH — أضف Trustline أولاً على stellar.expert');
+      } else {
+        setError(errMsg);
+      }
     } finally {
       setSending(false);
     }

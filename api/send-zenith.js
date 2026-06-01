@@ -39,12 +39,30 @@ export default async function handler(req, res) {
     const server      = new StellarSdk.Horizon.Server(HORIZON_URL);
     const distributor = StellarSdk.Keypair.fromSecret(DISTRIBUTOR_SECRET);
     const asset       = new StellarSdk.Asset('ZENITH', ZENITH_ISSUER);
-    const account     = await server.loadAccount(distributor.publicKey());
 
+    // فحص Trustline
+    const destAcc = await server.loadAccount(destination);
+    const hasTrust = destAcc.balances.some(b =>
+      b.asset_type !== 'native' &&
+      b.asset_code === 'ZENITH' &&
+      b.asset_issuer === ZENITH_ISSUER
+    );
+
+    if (!hasTrust) {
+      return res.status(400).json({
+        error: 'محفظتك لا تدعم ZENITH بعد',
+        hint: 'أضف Trustline على: https://stellar.expert/explorer/public/account/' + destination,
+        needsTrustline: true
+      });
+    }
+
+    const account = await server.loadAccount(distributor.publicKey());
     const tx = new StellarSdk.TransactionBuilder(account, {
       fee: StellarSdk.BASE_FEE, networkPassphrase: NETWORK_PASSPHRASE,
     })
-      .addOperation(StellarSdk.Operation.payment({ destination, asset, amount: parsed.toFixed(7) }))
+      .addOperation(StellarSdk.Operation.payment({
+        destination, asset, amount: parsed.toFixed(7)
+      }))
       .addMemo(StellarSdk.Memo.text(`ZE:${action}`))
       .setTimeout(30).build();
 
@@ -53,11 +71,15 @@ export default async function handler(req, res) {
     if (action === 'mining') claimLog.set(destination, Date.now());
 
     return res.status(200).json({
-      success: true, hash: result.hash, amount: parsed.toFixed(7), destination,
+      success: true, hash: result.hash,
+      amount: parsed.toFixed(7), destination,
       explorerUrl: `https://stellar.expert/explorer/public/tx/${result.hash}`,
     });
   } catch (err) {
     const codes = err?.response?.data?.extras?.result_codes;
-    return res.status(500).json({ error: 'فشل الإرسال', details: codes ? JSON.stringify(codes) : err.message });
+    return res.status(500).json({
+      error: 'فشل الإرسال',
+      details: codes ? JSON.stringify(codes) : err.message
+    });
   }
 }
