@@ -6,7 +6,7 @@ import { truncateStellarAddress } from '../../utils/format';
 const wallets = [
   { 
     name: 'Primary Wallet', 
-    address: 'ILGCMRPF2KNTNFSNB7LIX6KDWKLVGMGNZT2ACHCMF2R3OX5YZFSQPYTEP6',
+    address: 'GCMRPF2KNTNFSNB7LIX6KDWKLVGMGNZT2ACHCMF2R3OX5YZFSQPYTEP6',
     color: 'from-blue-500 to-cyan-500',
     balance: '10,234.50 XLM'
   },
