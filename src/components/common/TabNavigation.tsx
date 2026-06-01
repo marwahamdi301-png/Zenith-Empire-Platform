@@ -1,13 +1,15 @@
 // src/components/common/TabNavigation.tsx
 import { useState } from 'react';
-import { LayoutDashboard, ArrowLeftRight, ShieldAlert, Cpu, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, ArrowLeftRight, ShieldAlert, Cpu, ShieldCheck, BookOpen } from 'lucide-react';
 import { DashboardView } from '../dashboard/DashboardView';
 import { TradingView } from '../trading/TradingView';
 import { SecurityView } from '../wallet/SecurityView';
 import { MobileMining } from '../mining/MobileMining';
 import { AdminDashboard } from '../admin/AdminDashboard';
+import { TrustlineGuide } from '../wallet/TrustlineGuide';
+import { WalletPage } from '../wallet/WalletPage';
 
-type TabType = 'dashboard' | 'trading' | 'security' | 'mining' | 'admin';
+type TabType = 'dashboard' | 'trading' | 'security' | 'mining' | 'admin' | 'wallet' | 'guide';
 
 export function TabNavigation() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
@@ -21,6 +23,8 @@ export function TabNavigation() {
         {activeTab === 'security'  && <SecurityView />}
         {activeTab === 'mining'    && <MobileMining />}
         {activeTab === 'admin'     && <AdminDashboard />}
+        {activeTab === 'wallet'    && <WalletPage />}
+        {activeTab === 'guide'     && <TrustlineGuide />}
       </main>
 
       {/* شريط التنقل السفلي المثبت - Mobile First */}
@@ -59,6 +63,16 @@ export function TabNavigation() {
             <span>الأمان</span>
           </button>
 
+          <button onClick={() => setActiveTab('wallet')}
+            className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${activeTab === 'wallet' ? 'text-yellow-400' : 'text-gray-400'}`}>
+            <ShieldAlert className="w-5 h-5" />
+            <span>المحافظ</span>
+          </button>
+          <button onClick={() => setActiveTab('guide')}
+            className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${activeTab === 'guide' ? 'text-yellow-400' : 'text-gray-400'}`}>
+            <BookOpen className="w-5 h-5" />
+            <span>ZENITH</span>
+          </button>
           {/* تبويب الإدارة - يفضل برمجته لاحقاً ليظهر فقط عند شروط معينة */}
           <button onClick={() => setActiveTab('admin')}
             className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${
