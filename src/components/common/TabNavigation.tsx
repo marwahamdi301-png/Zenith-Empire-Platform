@@ -1,87 +1,52 @@
-// src/components/common/TabNavigation.tsx
 import { useState } from 'react';
-import { LayoutDashboard, ArrowLeftRight, ShieldAlert, Cpu, ShieldCheck, BookOpen } from 'lucide-react';
-import { DashboardView } from '../dashboard/DashboardView';
-import { TradingView } from '../trading/TradingView';
-import { SecurityView } from '../wallet/SecurityView';
-import { MobileMining } from '../mining/MobileMining';
-import { AdminDashboard } from '../admin/AdminDashboard';
-import { TrustlineGuide } from '../wallet/TrustlineGuide';
-import { WalletPage } from '../wallet/WalletPage';
+import { LayoutDashboard, ArrowLeftRight, Cpu, ShieldCheck, BookOpen, Wallet } from 'lucide-react';
+import { DashboardView }   from '../dashboard/DashboardView';
+import { TradingView }     from '../trading/TradingView';
+import { MobileMining }    from '../mining/MobileMining';
+import { AdminDashboard }  from '../admin/AdminDashboard';
+import { WalletPage }      from '../wallet/WalletPage';
+import { TrustlineGuide }  from '../wallet/TrustlineGuide';
 
-type TabType = 'dashboard' | 'trading' | 'security' | 'mining' | 'admin' | 'wallet' | 'guide';
+type TabType = 'dashboard' | 'trading' | 'mining' | 'wallet' | 'guide' | 'admin';
 
 export function TabNavigation() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
 
+  const tabs = [
+    { id: 'dashboard', label: 'الرئيسية', icon: LayoutDashboard,  color: 'text-yellow-400' },
+    { id: 'trading',   label: 'التداول',  icon: ArrowLeftRight,   color: 'text-yellow-400' },
+    { id: 'mining',    label: 'التعدين',  icon: Cpu,              color: 'text-yellow-400' },
+    { id: 'wallet',    label: 'المحافظ',  icon: Wallet,           color: 'text-yellow-400' },
+    { id: 'guide',     label: 'ZENITH',   icon: BookOpen,         color: 'text-yellow-400' },
+    { id: 'admin',     label: 'الإدارة',  icon: ShieldCheck,      color: 'text-orange-400' },
+  ] as const;
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-950 text-white">
-      {/* المحتوى المتغير بناءً على التبويب النشط */}
       <main className="flex-1 pb-24">
         {activeTab === 'dashboard' && <DashboardView />}
         {activeTab === 'trading'   && <TradingView />}
-        {activeTab === 'security'  && <SecurityView />}
         {activeTab === 'mining'    && <MobileMining />}
-        {activeTab === 'admin'     && <AdminDashboard />}
         {activeTab === 'wallet'    && <WalletPage />}
         {activeTab === 'guide'     && <TrustlineGuide />}
+        {activeTab === 'admin'     && <AdminDashboard />}
       </main>
 
-      {/* شريط التنقل السفلي المثبت - Mobile First */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-gray-900/90 backdrop-blur-md border-t border-gray-800 px-2 py-2 z-50">
+      <nav className="fixed bottom-0 left-0 right-0 bg-gray-900/90 backdrop-blur-md border-t border-gray-800 px-1 py-2 z-50">
         <div className="max-w-lg mx-auto flex justify-around items-center">
-          
-          <button onClick={() => setActiveTab('dashboard')}
-            className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${
-              activeTab === 'dashboard' ? 'text-yellow-400' : 'text-gray-400 hover:text-gray-200'
-            }`}>
-            <LayoutDashboard className="w-5 h-5" />
-            <span>الرئيسية</span>
-          </button>
-
-          <button onClick={() => setActiveTab('trading')}
-            className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${
-              activeTab === 'trading' ? 'text-yellow-400' : 'text-gray-400 hover:text-gray-200'
-            }`}>
-            <ArrowLeftRight className="w-5 h-5" />
-            <span>التداول</span>
-          </button>
-
-          <button onClick={() => setActiveTab('mining')}
-            className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${
-              activeTab === 'mining' ? 'text-yellow-400' : 'text-gray-400 hover:text-gray-200'
-            }`}>
-            <Cpu className="w-5 h-5" />
-            <span>التعدين</span>
-          </button>
-
-          <button onClick={() => setActiveTab('security')}
-            className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${
-              activeTab === 'security' ? 'text-yellow-400' : 'text-gray-400 hover:text-gray-200'
-            }`}>
-            <ShieldAlert className="w-5 h-5" />
-            <span>الأمان</span>
-          </button>
-
-          <button onClick={() => setActiveTab('wallet')}
-            className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${activeTab === 'wallet' ? 'text-yellow-400' : 'text-gray-400'}`}>
-            <ShieldAlert className="w-5 h-5" />
-            <span>المحافظ</span>
-          </button>
-          <button onClick={() => setActiveTab('guide')}
-            className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${activeTab === 'guide' ? 'text-yellow-400' : 'text-gray-400'}`}>
-            <BookOpen className="w-5 h-5" />
-            <span>ZENITH</span>
-          </button>
-          {/* تبويب الإدارة - يفضل برمجته لاحقاً ليظهر فقط عند شروط معينة */}
-          <button onClick={() => setActiveTab('admin')}
-            className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${
-              activeTab === 'admin' ? 'text-orange-400' : 'text-gray-500 hover:text-gray-300'
-            }`}>
-            <ShieldCheck className="w-5 h-5" />
-            <span>الإدارة</span>
-          </button>
-
+          {tabs.map(tab => {
+            const Icon    = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button key={tab.id} onClick={() => setActiveTab(tab.id as TabType)}
+                className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${
+                  isActive ? tab.color : 'text-gray-500 hover:text-gray-300'
+                }`}>
+                <Icon className="w-5 h-5" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
       </nav>
     </div>
