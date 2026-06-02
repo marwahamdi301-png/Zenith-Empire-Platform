@@ -1,24 +1,26 @@
 import { useState } from 'react';
 import { LayoutDashboard, ArrowLeftRight, Cpu, ShieldCheck, BookOpen, Wallet } from 'lucide-react';
-import { DashboardView }   from '../dashboard/DashboardView';
-import { TradingView }     from '../trading/TradingView';
-import { MobileMining }    from '../mining/MobileMining';
-import { AdminDashboard }  from '../admin/AdminDashboard';
-import { WalletPage }      from '../wallet/WalletPage';
-import { TrustlineGuide }  from '../wallet/TrustlineGuide';
+import { DashboardView }  from '../dashboard/DashboardView';
+import { TradingView }    from '../trading/TradingView';
+import { MobileMining }   from '../mining/MobileMining';
+import { AdminDashboard } from '../admin/AdminDashboard';
+import { WalletPage }     from '../wallet/WalletPage';
+import { TrustlineGuide } from '../wallet/TrustlineGuide';
+import PiExchange         from '../../pages/PiExchange';
 
-type TabType = 'dashboard' | 'trading' | 'mining' | 'wallet' | 'guide' | 'admin';
+type TabType = 'dashboard' | 'trading' | 'mining' | 'wallet' | 'guide' | 'admin' | 'pi';
 
 export function TabNavigation() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
 
   const tabs = [
-    { id: 'dashboard', label: 'الرئيسية', icon: LayoutDashboard,  color: 'text-yellow-400' },
-    { id: 'trading',   label: 'التداول',  icon: ArrowLeftRight,   color: 'text-yellow-400' },
-    { id: 'mining',    label: 'التعدين',  icon: Cpu,              color: 'text-yellow-400' },
-    { id: 'wallet',    label: 'المحافظ',  icon: Wallet,           color: 'text-yellow-400' },
-    { id: 'guide',     label: 'ZENITH',   icon: BookOpen,         color: 'text-yellow-400' },
-    { id: 'admin',     label: 'الإدارة',  icon: ShieldCheck,      color: 'text-orange-400' },
+    { id: 'dashboard', label: 'الرئيسية', icon: LayoutDashboard, color: 'text-yellow-400' },
+    { id: 'trading',   label: 'التداول',  icon: ArrowLeftRight,  color: 'text-yellow-400' },
+    { id: 'mining',    label: 'التعدين',  icon: Cpu,             color: 'text-yellow-400' },
+    { id: 'wallet',    label: 'المحافظ',  icon: Wallet,          color: 'text-yellow-400' },
+    { id: 'guide',     label: 'ZENITH',   icon: BookOpen,        color: 'text-yellow-400' },
+    { id: 'pi',        label: 'Pi',       icon: () => <span className="text-lg font-bold">π</span>, color: 'text-purple-400' },
+    { id: 'admin',     label: 'الإدارة',  icon: ShieldCheck,     color: 'text-orange-400' },
   ] as const;
 
   return (
@@ -29,19 +31,23 @@ export function TabNavigation() {
         {activeTab === 'mining'    && <MobileMining />}
         {activeTab === 'wallet'    && <WalletPage />}
         {activeTab === 'guide'     && <TrustlineGuide />}
+        {activeTab === 'pi'        && <PiExchange />}
         {activeTab === 'admin'     && <AdminDashboard />}
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-gray-900/90 backdrop-blur-md border-t border-gray-800 px-1 py-2 z-50">
         <div className="max-w-lg mx-auto flex justify-around items-center">
           {tabs.map(tab => {
-            const Icon    = tab.icon;
+            const Icon = tab.icon;
             const isActive = activeTab === tab.id;
             return (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id as TabType)}
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as TabType)}
                 className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${
                   isActive ? tab.color : 'text-gray-500 hover:text-gray-300'
-                }`}>
+                }`}
+              >
                 <Icon className="w-5 h-5" />
                 <span>{tab.label}</span>
               </button>

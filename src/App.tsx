@@ -6,6 +6,7 @@ import { NotificationCenter } from './components/common/NotificationCenter';
 import { DashboardView } from './components/dashboard/DashboardView';
 import { TradingView } from './components/trading/TradingView';
 import { SecurityView } from './components/wallet/SecurityView';
+import PiExchange from './pages/PiExchange';
 
 function App() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
@@ -18,6 +19,8 @@ function App() {
         return <TradingView />;
       case 'security':
         return <SecurityView />;
+      case 'pi-exchange':
+        return <PiExchange />;
       default:
         return <DashboardView />;
     }
@@ -38,7 +41,6 @@ function App() {
                 <p className="text-xs text-gray-400">Stellar Trading Platform</p>
               </div>
             </div>
-            
             <div className="flex items-center gap-4">
               <div className="hidden sm:block text-right">
                 <p className="text-sm font-medium text-white">$12,458.50</p>
@@ -73,21 +75,13 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-gray-400">
-              © 2024 Zenith Empire. Powered by Stellar Network.
+              © 2026 Zenith Empire · Powered by Stellar + Pi Network 🌍
             </p>
             <div className="flex items-center gap-6">
-              <a href="#" className="text-sm text-gray-400 hover:text-primary transition-colors">
-                Docs
-              </a>
-              <a href="#" className="text-sm text-gray-400 hover:text-primary transition-colors">
-                API
-              </a>
-              <a href="#" className="text-sm text-gray-400 hover:text-primary transition-colors">
-                Support
-              </a>
-              <a href="https://github.com/marwahamdi301-png/Zenith-Empire-Platform" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-primary transition-colors">
-                GitHub
-              </a>
+              <a href="#" className="text-sm text-gray-400 hover:text-primary transition-colors">Docs</a>
+              <a href="#" className="text-sm text-gray-400 hover:text-primary transition-colors">API</a>
+              <a href="#" className="text-sm text-gray-400 hover:text-primary transition-colors">Support</a>
+              <a href="https://github.com/marwahamdi301-png/Zenith-Empire-Platform" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-primary transition-colors">GitHub</a>
             </div>
           </div>
         </div>
