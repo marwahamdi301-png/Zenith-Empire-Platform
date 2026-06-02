@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Zap, Settings } from 'lucide-react';
 import { TabNavigation, type TabType } from './components/common/TabNavigation';
 import { PriceTicker } from './components/common/PriceTicker';
@@ -6,9 +6,11 @@ import { NotificationCenter } from './components/common/NotificationCenter';
 import { DashboardView } from './components/dashboard/DashboardView';
 import { TradingView } from './components/trading/TradingView';
 import { SecurityView } from './components/wallet/SecurityView';
+import { initAndAuthPi } from './lib/piAuth';
 import PiExchange from './pages/PiExchange';
 
 function App() {
+  useEffect(() => { initAndAuthPi(); }, []);
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
 
   const renderTabContent = () => {
@@ -91,3 +93,9 @@ function App() {
 }
 
 export default App;
+// في أعلى الملف أضف:
+// import { useEffect, useState } from 'react';
+// import { initAndAuthPi, getPiUser } from './lib/piAuth';
+
+// في داخل function App() أضف:
+// useEffect(() => { initAndAuthPi(); }, []);
