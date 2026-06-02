@@ -1,0 +1,25 @@
+[DOCUMENTATION]
+ORG_NAME="Zenith Empire"
+ORG_DBA="Zenith Empire Trading Platform"
+ORG_URL="https://zenith-empire-cyan.vercel.app"
+ORG_LOGO="https://zenith-empire-cyan.vercel.app/logo.png"
+ORG_DESCRIPTION="Stellar-based trading platform with ZENITH token ecosystem"
+ORG_TWITTER="ZenithEmpire"
+ORG_GITHUB="zenith-empire"
+
+[[PRINCIPALS]]
+name="Zenith Empire Admin"
+github="zenith-empire"
+
+[[CURRENCIES]]
+code="ZENITH"
+issuer="GA3T3OZ5V2JAZR5RCH3NII7JBNUMDPBSSXF6N6HKZGLTM5JSZCX7OTFQ"
+display_decimals=2
+name="Zenith Empire Token"
+desc="ZENITH is the native utility token of the Zenith Empire Stellar Trading Platform. Used for mining rewards, trading, and platform governance."
+image="https://zenith-empire-cyan.vercel.app/zenith-logo.png"
+status="live"
+is_asset_anchored=false
+anchor_asset_type="other"
+max_number=1000000000
+fixed_number=1000000000
