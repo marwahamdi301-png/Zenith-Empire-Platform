@@ -1,0 +1,78 @@
+declare global {
+  interface Window { Pi: any; }
+}
+
+export const initPiNetwork = () => {
+  if (typeof window !== "undefined" && window.Pi) {
+    window.Pi.init({ version: "2.0", sandbox: false });
+  }
+};
+
+export const authenticateWithPi = async () => {
+  const auth = await window.Pi.authenticate(
+    ["payments", "username", "wallet_address"],
+    onIncompletePayment
+  );
+  return {
+    username: auth.user.username,
+    uid: auth.user.uid,
+    walletAddress: auth.user.wallet_address,
+    accessToken: auth.accessToken
+  };
+};
+
+const onIncompletePayment = async (payment: any) => {
+  await fetch("/api/pi/complete", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      paymentId: payment.identifier,
+      txid: payment.transaction?.txid
+    })
+  });
+};
+
+export const createPiToZenithPayment = async (
+  piAmount: number,
+  zenithAmount: number,
+  userWallet: string
+) => {
+  return await window.Pi.createPayment(
+    {
+      amount: piAmount,
+      memo: `شراء ${zenithAmount} ZENITH`,
+      metadata: {
+        type: "PI_TO_ZENITH",
+        zenith_amount: zenithAmount,
+        stellar_address: userWallet
+      }
+    },
+    {
+      onReadyForServerApproval: async (paymentId: string) => {
+        await fetch("/api/pi/approve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentId })
+        });
+      },
+      onReadyForServerCompletion: async (paymentId: string, txid: string) => {
+        await fetch("/api/pi/complete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentId, txid })
+        });
+      },
+      onCancel: (paymentId: string) => {
+        console.log("cancelled:", paymentId);
+      },
+      onError: (error: any) => {
+        console.error("error:", error);
+      }
+    }
+  );
+};
+
+export const getExchangeRate = () => ({
+  pi_to_zenith: 1000,
+  zenith_to_pi: 0.001
+});
