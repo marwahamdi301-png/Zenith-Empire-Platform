@@ -24,3 +24,4 @@ is_asset_anchored=false
 anchor_asset_type="other"
 max_number=1000000000
 fixed_number=1000000000
+domain="zenith-empire-cyan.vercel.app"
