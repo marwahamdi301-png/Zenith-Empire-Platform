@@ -2,6 +2,7 @@
 ORG_NAME="Zenith Empire"
 ORG_DBA="Zenith Empire Trading Platform"
 ORG_URL="https://zenith-empire-cyan.vercel.app"
+ORG_DOMAIN="zenith-empire-cyan.vercel.app"
 ORG_LOGO="https://zenith-empire-cyan.vercel.app/logo.png"
 ORG_DESCRIPTION="Stellar-based trading platform with ZENITH token ecosystem"
 ORG_TWITTER="ZenithEmpire"

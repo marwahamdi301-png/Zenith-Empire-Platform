@@ -4,7 +4,7 @@ import { Copy, ExternalLink, RefreshCw, CheckCircle2, AlertCircle, Shield, BookO
 const WALLETS = [
   { key: 'primary',   label: 'Primary Wallet',    address: 'GCMRPF2KNTNFSNB7LIX6KDWKLVGMGNZT2ACHCMF2R3OX5YZFSQPYTEP6', color: 'from-blue-500 to-cyan-500',     icon: '💎' },
   { key: 'secondary', label: 'Secondary Wallet',   address: 'GDPMNWGH6XOT2FEF7KR7TQO3K2IRQOTX4ONZBOCRD6QY73OXDLEDPKEX',  color: 'from-purple-500 to-pink-500',   icon: '💼' },
-  { key: 'rewards',   label: 'Rewards Wallet',     address: import.meta.env.VITE_PI_APP_WALLET || 'GCPPXIL53RLGXXAE2PKSWASIS5BIECC4YNXZK73JZMLTB67SQQDMY2WP',  color: 'from-green-500 to-emerald-500', icon: '🎁' },
+  { key: 'rewards',   label: 'Rewards Wallet',     address: import.meta.env.VITE_PI_APP_WALLET || 'PUT_YOUR_CHOSEN_WALLET_HERE',  color: 'from-green-500 to-emerald-500', icon: '🎁' },
   { key: 'dist',      label: 'ZENITH Distributor', address: 'GB6TK6UPBQAIHYLPYGJDLCLXB2HLP452DPDNRNR2JETEDPSXKWOCXLZB',  color: 'from-yellow-500 to-orange-500', icon: '🪙' },
 ];
 
