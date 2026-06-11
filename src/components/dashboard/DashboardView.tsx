@@ -1,4 +1,5 @@
 import { TrendingUp, TrendingDown, DollarSign, Activity, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import PriceChart from "../PriceChart";
 import { MarketOverview } from './MarketOverview';
 import { PortfolioManager } from './PortfolioManager';
 
@@ -146,6 +147,9 @@ export function DashboardView() {
           </div>
         </div>
       </div>
+
+      {/* Live ZENITH Price */}
+      <PriceChart />
 
       {/* Market Overview */}
       <MarketOverview />
