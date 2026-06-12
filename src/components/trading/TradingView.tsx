@@ -1,165 +1,196 @@
-import { useState } from 'react';
-import { ArrowUpCircle, ArrowDownCircle, TrendingUp } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowUpCircle, ArrowDownCircle, TrendingUp, Zap } from 'lucide-react';
 import { TradingChart } from './TradingChart';
 
-const tradingPairs = [
-  { pair: 'XLM/USDC', price: 0.1234, change: '+5.2%', volume: '1.2M', tvSymbol: 'BINANCE:XLMUSDT' },
-  { pair: 'BTC/USDC', price: 42100, change: '+2.8%', volume: '842K', tvSymbol: 'BINANCE:BTCUSDT' },
-  { pair: 'ETH/USDC', price: 2340, change: '-1.3%', volume: '523K', tvSymbol: 'BINANCE:ETHUSDT' },
+const ZENITH_ISSUER = 'GA3T3OZ5V2JAZR5RCH3NII7JBNUMDPBSSXF6N6HKZGLTM5JSZCX7OTFQ';
+
+const staticPairs = [
+  { pair: 'XLM/USDC', price: 0.1234, change: '+5.2%', volume: '1.2M', tvSymbol: 'BINANCE:XLMUSDT', isZenith: false },
+  { pair: 'BTC/USDC', price: 42100, change: '+2.8%', volume: '842K', tvSymbol: 'BINANCE:BTCUSDT', isZenith: false },
+  { pair: 'ETH/USDC', price: 2340, change: '-1.3%', volume: '523K', tvSymbol: 'BINANCE:ETHUSDT', isZenith: false },
 ];
 
 export function TradingView() {
   const [orderType, setOrderType] = useState<'buy' | 'sell'>('buy');
   const [amount, setAmount] = useState('');
-  const [price, setPrice] = useState('');
-  const [selectedPair, setSelectedPair] = useState(tradingPairs[0]);
+  const [xlmAmount, setXlmAmount] = useState('');
+  const [selectedPair, setSelectedPair] = useState(staticPairs[0]);
+  const [zenithPrice, setZenithPrice] = useState('0.0000001');
+  const [zenithVolume, setZenithVolume] = useState('0');
+  const [swapStatus, setSwapStatus] = useState('');
+  const [walletAddress, setWalletAddress] = useState('');
+  const [showSwap, setShowSwap] = useState(false);
+
+  useEffect(() => {
+    fetchZenithPrice();
+  }, []);
+
+  async function fetchZenithPrice() {
+    try {
+      const res = await fetch(
+        `https://horizon.stellar.org/order_book?selling_asset_type=credit_alphanum12&selling_asset_code=ZENITH&selling_asset_issuer=${ZENITH_ISSUER}&buying_asset_type=native&limit=1`
+      );
+      const data = await res.json();
+      if (data.asks?.length > 0) {
+        setZenithPrice(parseFloat(data.asks[0].price).toFixed(7));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function handleSwap() {
+    if (!walletAddress || !amount) {
+      setSwapStatus('❌ Enter wallet address and amount');
+      return;
+    }
+    setSwapStatus('⏳ Opening Stellar DEX...');
+    const stellarUrl = `https://stellarterm.com/#exchange/ZENITH-${ZENITH_ISSUER}/XLM-native`;
+    window.open(stellarUrl, '_blank');
+    setSwapStatus('✅ Opened StellarTerm DEX!');
+  }
+
+  const zenithPair = {
+    pair: 'ZENITH/XLM',
+    price: parseFloat(zenithPrice),
+    change: '+0.0%',
+    volume: zenithVolume,
+    tvSymbol: 'BINANCE:XLMUSDT',
+    isZenith: true,
+  };
+
+  const allPairs = [zenithPair, ...staticPairs];
 
   return (
     <div className="space-y-6 animate-slide-in">
       {/* Trading Pairs */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {tradingPairs.map((pair) => {
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-4">
+        {allPairs.map((pair) => {
           const isPositive = pair.change.startsWith('+');
           const isSelected = selectedPair.pair === pair.pair;
-          
           return (
             <button
               key={pair.pair}
-              onClick={() => setSelectedPair(pair)}
-              className={`bg-gray-800/50 backdrop-blur-sm border rounded-xl p-4 text-left transition-all ${
-                isSelected 
-                  ? 'border-primary shadow-lg shadow-primary/20' 
-                  : 'border-gray-700 hover:border-gray-600'
-              }`}
+              onClick={() => { setSelectedPair(pair); setShowSwap(pair.isZenith); }}
+              className={`backdrop-blur-sm border rounded-xl p-3 text-left transition-all ${
+                isSelected
+                  ? 'border-cyan-500 shadow-lg shadow-cyan-500/20 bg-gray-800'
+                  : 'border-gray-700 hover:border-gray-600 bg-gray-800/50'
+              } ${pair.isZenith ? 'border-yellow-500/50' : ''}`}
             >
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-bold text-white">{pair.pair}</span>
-                <TrendingUp className={`w-4 h-4 ${isPositive ? 'text-green-400' : 'text-red-400'}`} />
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-white text-xs">
+                  {pair.isZenith && '⚡'} {pair.pair}
+                </span>
+                <TrendingUp className={`w-3 h-3 ${isPositive ? 'text-green-400' : 'text-red-400'}`} />
               </div>
-              <div className="text-2xl font-bold text-white mb-1">
-                ${pair.price.toLocaleString()}
+              <div className="text-lg font-bold text-white">
+                {pair.isZenith ? `${pair.price.toFixed(7)}` : `$${pair.price.toLocaleString()}`}
               </div>
-              <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center justify-between text-xs mt-1">
                 <span className={isPositive ? 'text-green-400' : 'text-red-400'}>
                   {pair.change}
                 </span>
-                <span className="text-gray-400">Vol: {pair.volume}</span>
               </div>
             </button>
           );
         })}
       </div>
 
-      {/* TradingView Chart */}
-      <TradingChart symbol={selectedPair.tvSymbol} />
+      {/* ZENITH Swap Panel */}
+      {showSwap && (
+        <div className="mx-4 bg-gray-900 border border-yellow-500/30 rounded-xl p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Zap className="text-yellow-400 w-5 h-5" />
+            <h3 className="text-white font-bold text-lg">Swap ZENITH / XLM</h3>
+          </div>
 
-      {/* Trading Interface */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Order Book */}
-        <div className="lg:col-span-2 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
-          <h2 className="text-xl font-bold text-white mb-4">Order Book - {selectedPair.pair}</h2>
-          <div className="grid grid-cols-2 gap-6">
+          <div className="space-y-3">
             <div>
-              <div className="text-sm text-gray-400 mb-2">Asks (Sell)</div>
-              <div className="space-y-1">
-                {[0.1240, 0.1238, 0.1236, 0.1235, 0.1234].map((askPrice, i) => (
-                  <div key={i} className="flex justify-between text-sm px-2 py-1 rounded hover:bg-red-500/10">
-                    <span className="text-red-400 font-medium">{askPrice.toFixed(4)}</span>
-                    <span className="text-gray-400">{(Math.random() * 10000).toFixed(0)}</span>
-                  </div>
-                ))}
-              </div>
+              <label className="text-gray-400 text-sm mb-1 block">Your Stellar Address</label>
+              <input
+                type="text"
+                placeholder="G..."
+                value={walletAddress}
+                onChange={e => setWalletAddress(e.target.value)}
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:border-cyan-500 focus:outline-none"
+              />
             </div>
-            
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setOrderType('buy')}
+                className={`py-2 rounded-lg font-bold text-sm transition-all ${orderType === 'buy' ? 'bg-green-500 text-white' : 'bg-gray-800 text-gray-400'}`}
+              >
+                BUY ZENITH
+              </button>
+              <button
+                onClick={() => setOrderType('sell')}
+                className={`py-2 rounded-lg font-bold text-sm transition-all ${orderType === 'sell' ? 'bg-red-500 text-white' : 'bg-gray-800 text-gray-400'}`}
+              >
+                SELL ZENITH
+              </button>
+            </div>
+
             <div>
-              <div className="text-sm text-gray-400 mb-2">Bids (Buy)</div>
-              <div className="space-y-1">
-                {[0.1233, 0.1232, 0.1230, 0.1228, 0.1226].map((bidPrice, i) => (
-                  <div key={i} className="flex justify-between text-sm px-2 py-1 rounded hover:bg-green-500/10">
-                    <span className="text-green-400 font-medium">{bidPrice.toFixed(4)}</span>
-                    <span className="text-gray-400">{(Math.random() * 10000).toFixed(0)}</span>
-                  </div>
-                ))}
-              </div>
+              <label className="text-gray-400 text-sm mb-1 block">
+                {orderType === 'buy' ? 'ZENITH Amount' : 'ZENITH to Sell'}
+              </label>
+              <input
+                type="number"
+                placeholder="1000"
+                value={amount}
+                onChange={e => {
+                  setAmount(e.target.value);
+                  setXlmAmount((parseFloat(e.target.value) * parseFloat(zenithPrice)).toFixed(4));
+                }}
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:border-cyan-500 focus:outline-none"
+              />
             </div>
+
+            {amount && (
+              <div className="bg-gray-800 rounded-lg p-3 text-sm">
+                <div className="flex justify-between text-gray-400">
+                  <span>XLM {orderType === 'buy' ? 'needed' : 'received'}:</span>
+                  <span className="text-cyan-400 font-bold">{xlmAmount} XLM</span>
+                </div>
+                <div className="flex justify-between text-gray-400 mt-1">
+                  <span>Price per ZENITH:</span>
+                  <span className="text-white">{zenithPrice} XLM</span>
+                </div>
+              </div>
+            )}
+
+            <button
+              onClick={handleSwap}
+              className="w-full py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold rounded-lg hover:opacity-90 transition-all"
+            >
+              {orderType === 'buy' ? '⚡ Buy ZENITH' : '💸 Sell ZENITH'} on Stellar DEX
+            </button>
+
+            {swapStatus && (
+              <div className="text-center text-sm text-gray-400">{swapStatus}</div>
+            )}
+
+            <p className="text-xs text-gray-600 text-center">
+              Powered by Stellar DEX — Non-custodial trading
+            </p>
           </div>
         </div>
+      )}
 
-        {/* Order Form */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
-          <h2 className="text-xl font-bold text-white mb-4">Place Order</h2>
-          
-          <div className="flex gap-2 mb-6">
-            <button
-              onClick={() => setOrderType('buy')}
-              className={`flex-1 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-                orderType === 'buy'
-                  ? 'bg-green-500 text-white shadow-lg'
-                  : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
-              }`}
-            >
-              <ArrowUpCircle className="w-5 h-5" />
-              Buy
-            </button>
-            <button
-              onClick={() => setOrderType('sell')}
-              className={`flex-1 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-                orderType === 'sell'
-                  ? 'bg-red-500 text-white shadow-lg'
-                  : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
-              }`}
-            >
-              <ArrowDownCircle className="w-5 h-5" />
-              Sell
-            </button>
-          </div>
+      {/* Trading Chart */}
+      {!showSwap && (
+        <div className="mx-4">
+          <TradingChart tvSymbol={selectedPair.tvSymbol} />
+        </div>
+      )}
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">Price (USDC)</label>
-              <input
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="0.1234"
-                className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-primary focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">Amount (XLM)</label>
-              <input
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="1000"
-                className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-primary focus:outline-none"
-              />
-            </div>
-
-            <div className="bg-gray-900/50 rounded-lg p-3">
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-400">Total</span>
-                <span className="text-white font-bold">
-                  {price && amount ? `$${(parseFloat(price) * parseFloat(amount)).toFixed(2)}` : '$0.00'}
-                </span>
-              </div>
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>Fee (0.1%)</span>
-                <span>{price && amount ? `$${(parseFloat(price) * parseFloat(amount) * 0.001).toFixed(2)}` : '$0.00'}</span>
-              </div>
-            </div>
-
-            <button
-              className={`w-full py-4 rounded-lg font-bold text-white transition-all ${
-                orderType === 'buy'
-                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:opacity-90'
-                  : 'bg-gradient-to-r from-red-500 to-rose-600 hover:opacity-90'
-              }`}
-            >
-              {orderType === 'buy' ? 'Place Buy Order' : 'Place Sell Order'}
-            </button>
-          </div>
+      {/* Order Book placeholder */}
+      <div className="mx-4 bg-gray-800/50 border border-gray-700 rounded-xl p-4">
+        <h3 className="text-white font-bold mb-3">📊 Order Book — ZENITH/XLM</h3>
+        <div className="text-center text-gray-500 text-sm py-4">
+          Click ZENITH/XLM above to trade ⚡
         </div>
       </div>
     </div>
