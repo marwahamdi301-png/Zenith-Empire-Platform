@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowUpCircle, ArrowDownCircle, TrendingUp, Zap } from 'lucide-react';
 import { TradingChart } from './TradingChart';
+import { OrderBook } from './OrderBook';
 
 const ZENITH_ISSUER = 'GA3T3OZ5V2JAZR5RCH3NII7JBNUMDPBSSXF6N6HKZGLTM5JSZCX7OTFQ';
 
@@ -190,7 +191,7 @@ export function TradingView() {
       <div className="mx-4 bg-gray-800/50 border border-gray-700 rounded-xl p-4">
         <h3 className="text-white font-bold mb-3">📊 Order Book — ZENITH/XLM</h3>
         <div className="text-center text-gray-500 text-sm py-4">
-          Click ZENITH/XLM above to trade ⚡
+          <OrderBook />
         </div>
       </div>
     </div>
