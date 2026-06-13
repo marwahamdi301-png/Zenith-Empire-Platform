@@ -10,6 +10,8 @@ import PiExchange         from '../../pages/PiExchange';
 import Marketplace        from '../../pages/Marketplace';
 import SellerRegister     from '../../pages/SellerRegister';
 import Analytics          from '../../pages/Analytics';
+import AirdropClaim       from '../../pages/AirdropClaim';
+import Staking            from '../../pages/Staking';
 
 type TabType = 'dashboard' | 'trading' | 'mining' | 'wallet' | 'market' | 'guide' | 'pi' | 'admin';
 
@@ -24,6 +26,8 @@ export function TabNavigation() {
     { id: 'market',    label: 'السوق',    icon: ShoppingBag,      color: 'text-green-400'  },
     { id: 'guide',     label: 'ZENITH',   icon: BookOpen,         color: 'text-yellow-400' },
     { id: 'pi',        label: 'Pi',       icon: () => <span className="text-lg font-bold">π</span>, color: 'text-purple-400' },
+    { id: 'airdrop',   label: 'Airdrop',  icon: () => <span className="text-lg">🎁</span>, color: 'text-yellow-400' },
+    { id: 'staking',   label: 'Staking',  icon: () => <span className="text-lg">💎</span>, color: 'text-blue-400'   },
     { id: 'analytics', label: 'تحليل',   icon: () => <span className="text-lg">📊</span>, color: 'text-purple-400' },
     { id: 'seller',    label: 'بائع',     icon: () => <span className="text-lg">🌾</span>, color: 'text-green-400'  },
     { id: 'admin',     label: 'الإدارة',  icon: ShieldCheck,      color: 'text-orange-400' },
@@ -37,6 +41,8 @@ export function TabNavigation() {
         {activeTab === 'mining'    && <MobileMining />}
         {activeTab === 'wallet'    && <WalletPage />}
         {activeTab === 'market'    && <Marketplace />}
+        {activeTab === 'airdrop'   && <AirdropClaim />}
+        {activeTab === 'staking'   && <Staking />}
         {activeTab === 'analytics' && <Analytics />}
         {activeTab === 'seller'    && <SellerRegister />}
         {activeTab === 'guide'     && <TrustlineGuide />}
