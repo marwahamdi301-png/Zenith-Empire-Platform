@@ -1,5 +1,5 @@
+import { LayoutDashboard, ArrowLeftRight, Cpu, ShieldCheck, BookOpen, Wallet, ShoppingBag } from 'lucide-react';
 import { useState } from 'react';
-import { LayoutDashboard, ArrowLeftRight, Cpu, ShieldCheck, BookOpen, Wallet } from 'lucide-react';
 import { DashboardView }  from '../dashboard/DashboardView';
 import { TradingView }    from '../trading/TradingView';
 import { MobileMining }   from '../mining/MobileMining';
@@ -7,20 +7,22 @@ import { AdminDashboard } from '../admin/AdminDashboard';
 import { WalletPage }     from '../wallet/WalletPage';
 import { TrustlineGuide } from '../wallet/TrustlineGuide';
 import PiExchange         from '../../pages/PiExchange';
+import Marketplace        from '../../pages/Marketplace';
 
-type TabType = 'dashboard' | 'trading' | 'mining' | 'wallet' | 'guide' | 'admin' | 'pi';
+type TabType = 'dashboard' | 'trading' | 'mining' | 'wallet' | 'market' | 'guide' | 'pi' | 'admin';
 
 export function TabNavigation() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
 
   const tabs = [
-    { id: 'dashboard', label: 'الرئيسية', icon: LayoutDashboard, color: 'text-yellow-400' },
-    { id: 'trading',   label: 'التداول',  icon: ArrowLeftRight,  color: 'text-yellow-400' },
-    { id: 'mining',    label: 'التعدين',  icon: Cpu,             color: 'text-yellow-400' },
-    { id: 'wallet',    label: 'المحافظ',  icon: Wallet,          color: 'text-yellow-400' },
-    { id: 'guide',     label: 'ZENITH',   icon: BookOpen,        color: 'text-yellow-400' },
+    { id: 'dashboard', label: 'الرئيسية', icon: LayoutDashboard,  color: 'text-yellow-400' },
+    { id: 'trading',   label: 'التداول',  icon: ArrowLeftRight,   color: 'text-yellow-400' },
+    { id: 'mining',    label: 'التعدين',  icon: Cpu,              color: 'text-yellow-400' },
+    { id: 'wallet',    label: 'المحافظ',  icon: Wallet,           color: 'text-yellow-400' },
+    { id: 'market',    label: 'السوق',    icon: ShoppingBag,      color: 'text-green-400'  },
+    { id: 'guide',     label: 'ZENITH',   icon: BookOpen,         color: 'text-yellow-400' },
     { id: 'pi',        label: 'Pi',       icon: () => <span className="text-lg font-bold">π</span>, color: 'text-purple-400' },
-    { id: 'admin',     label: 'الإدارة',  icon: ShieldCheck,     color: 'text-orange-400' },
+    { id: 'admin',     label: 'الإدارة',  icon: ShieldCheck,      color: 'text-orange-400' },
   ] as const;
 
   return (
@@ -30,6 +32,7 @@ export function TabNavigation() {
         {activeTab === 'trading'   && <TradingView />}
         {activeTab === 'mining'    && <MobileMining />}
         {activeTab === 'wallet'    && <WalletPage />}
+        {activeTab === 'market'    && <Marketplace />}
         {activeTab === 'guide'     && <TrustlineGuide />}
         {activeTab === 'pi'        && <PiExchange />}
         {activeTab === 'admin'     && <AdminDashboard />}
@@ -44,12 +47,12 @@ export function TabNavigation() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabType)}
-                className={`flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${
+                className={`flex flex-col items-center gap-1 p-1 text-xs font-medium transition-colors ${
                   isActive ? tab.color : 'text-gray-500 hover:text-gray-300'
                 }`}
               >
                 <Icon className="w-5 h-5" />
-                <span>{tab.label}</span>
+                <span className="text-[10px]">{tab.label}</span>
               </button>
             );
           })}
