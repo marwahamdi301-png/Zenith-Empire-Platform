@@ -8,6 +8,7 @@ import { WalletPage }     from '../wallet/WalletPage';
 import { TrustlineGuide } from '../wallet/TrustlineGuide';
 import PiExchange         from '../../pages/PiExchange';
 import Marketplace        from '../../pages/Marketplace';
+import SellerRegister     from '../../pages/SellerRegister';
 
 type TabType = 'dashboard' | 'trading' | 'mining' | 'wallet' | 'market' | 'guide' | 'pi' | 'admin';
 
@@ -22,6 +23,7 @@ export function TabNavigation() {
     { id: 'market',    label: 'السوق',    icon: ShoppingBag,      color: 'text-green-400'  },
     { id: 'guide',     label: 'ZENITH',   icon: BookOpen,         color: 'text-yellow-400' },
     { id: 'pi',        label: 'Pi',       icon: () => <span className="text-lg font-bold">π</span>, color: 'text-purple-400' },
+    { id: 'seller',    label: 'بائع',     icon: () => <span className="text-lg">🌾</span>, color: 'text-green-400'  },
     { id: 'admin',     label: 'الإدارة',  icon: ShieldCheck,      color: 'text-orange-400' },
   ] as const;
 
@@ -33,6 +35,7 @@ export function TabNavigation() {
         {activeTab === 'mining'    && <MobileMining />}
         {activeTab === 'wallet'    && <WalletPage />}
         {activeTab === 'market'    && <Marketplace />}
+        {activeTab === 'seller'    && <SellerRegister />}
         {activeTab === 'guide'     && <TrustlineGuide />}
         {activeTab === 'pi'        && <PiExchange />}
         {activeTab === 'admin'     && <AdminDashboard />}
