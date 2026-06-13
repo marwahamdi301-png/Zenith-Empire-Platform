@@ -30,7 +30,7 @@ export function TabNavigation() {
     { id: 'staking',   label: 'Staking',  icon: () => <span className="text-lg">💎</span>, color: 'text-blue-400'   },
     { id: 'analytics', label: 'تحليل',   icon: () => <span className="text-lg">📊</span>, color: 'text-purple-400' },
     { id: 'seller',    label: 'بائع',     icon: () => <span className="text-lg">🌾</span>, color: 'text-green-400'  },
-    { id: 'admin',     label: 'الإدارة',  icon: ShieldCheck,      color: 'text-orange-400' },
+    
   ] as const;
 
   return (
