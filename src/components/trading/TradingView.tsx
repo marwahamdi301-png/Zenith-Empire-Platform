@@ -6,9 +6,9 @@ import { OrderBook } from './OrderBook';
 const ZENITH_ISSUER = 'GA3T3OZ5V2JAZR5RCH3NII7JBNUMDPBSSXF6N6HKZGLTM5JSZCX7OTFQ';
 
 const staticPairs = [
-  { pair: 'XLM/USDC', price: 0.1234, change: '+5.2%', volume: '1.2M', tvSymbol: 'BINANCE:XLMUSDT', isZenith: false },
-  { pair: 'BTC/USDC', price: 42100, change: '+2.8%', volume: '842K', tvSymbol: 'BINANCE:BTCUSDT', isZenith: false },
-  { pair: 'ETH/USDC', price: 2340, change: '-1.3%', volume: '523K', tvSymbol: 'BINANCE:ETHUSDT', isZenith: false },
+  
+  
+  
 ];
 
 export function TradingView() {

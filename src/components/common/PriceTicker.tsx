@@ -1,42 +1,44 @@
 import { useEffect, useState } from 'react';
 
-const initialPrices = [
-  { symbol: 'BTC', price: 42100, change: 2.3 },
-  { symbol: 'ETH', price: 2340, change: -1.2 },
-  { symbol: 'XLM', price: 0.1234, change: 5.8 },
-  { symbol: 'ADA', price: 0.452, change: 3.1 },
-  { symbol: 'DOT', price: 6.78, change: -0.8 },
-  { symbol: 'USDC', price: 1.00, change: 0.0 },
-];
-
 export function PriceTicker() {
-  const [prices, setPrices] = useState(initialPrices);
+  const [prices, setPrices] = useState<any[]>([]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setPrices(prev => prev.map(p => ({
-        ...p,
-        price: p.price * (1 + (Math.random() - 0.5) * 0.001),
-        change: p.change + (Math.random() - 0.5) * 0.1,
-      })));
-    }, 3000);
-
+    fetchPrices();
+    const interval = setInterval(fetchPrices, 60000);
     return () => clearInterval(interval);
   }, []);
 
+  async function fetchPrices() {
+    try {
+      const res = await fetch(
+        'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,stellar,ripple&vs_currencies=usd&include_24hr_change=true'
+      );
+      const data = await res.json();
+      setPrices([
+        { symbol: 'BTC', price: data.bitcoin?.usd, change: data.bitcoin?.usd_24h_change },
+        { symbol: 'ETH', price: data.ethereum?.usd, change: data.ethereum?.usd_24h_change },
+        { symbol: 'XLM', price: data.stellar?.usd, change: data.stellar?.usd_24h_change },
+        { symbol: 'XRP', price: data.ripple?.usd, change: data.ripple?.usd_24h_change },
+      ]);
+    } catch {}
+  }
+
+  if (!prices.length) return null;
+
   return (
-    <div className="bg-gray-800/30 backdrop-blur-sm border-b border-gray-700 overflow-hidden">
-      <div className="flex animate-scroll">
-        {[...prices, ...prices].map((item, i) => (
-          <div key={i} className="flex items-center gap-2 px-6 py-2 whitespace-nowrap">
-            <span className="font-bold text-white">{item.symbol}</span>
-            <span className="text-gray-300">${item.price.toFixed(item.price < 1 ? 4 : 2)}</span>
-            <span className={`text-sm ${item.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-              {item.change >= 0 ? '+' : ''}{item.change.toFixed(2)}%
-            </span>
-          </div>
-        ))}
-      </div>
+    <div className="flex gap-6 overflow-x-auto text-xs py-1">
+      {prices.map((p, i) => (
+        <span key={i} className="flex gap-1 flex-shrink-0">
+          <span className="text-gray-400">{p.symbol}</span>
+          <span className="text-white font-medium">
+            ${p.price > 100 ? p.price.toLocaleString() : p.price?.toFixed(4)}
+          </span>
+          <span className={p.change > 0 ? 'text-green-400' : 'text-red-400'}>
+            {p.change > 0 ? '+' : ''}{p.change?.toFixed(2)}%
+          </span>
+        </span>
+      ))}
     </div>
   );
 }
