@@ -37,12 +37,25 @@ export default function AirdropClaim() {
 
   async function claimAirdrop() {
     setLoading(true);
-    setStatus('⏳ Processing your claim...');
-    setTimeout(() => {
-      setClaimed(true);
-      setStatus('🎉 1,000 ZENITH will be sent within 24 hours!');
+    setStatus('⏳ Processing your claim on Stellar...');
+    try {
+      const response = await fetch('/api/airdrop', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address, referral })
+      });
+      const data = await response.json();
+      if (data.success) {
+        setClaimed(true);
+        setStatus(`🎉 1,000 ZENITH sent! TX: ${data.txHash?.slice(0,20)}...`);
+      } else {
+        setStatus(`❌ Error: ${data.error}`);
+      }
+    } catch (err) {
+      setStatus('❌ Network error. Try again.');
+    } finally {
       setLoading(false);
-    }, 2000);
+    }
   }
 
   if (claimed) {
