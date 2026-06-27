@@ -14,6 +14,10 @@ export default function AirdropClaim() {
       setStatus('❌ Invalid Stellar address');
       return;
     }
+    if (address.length !== 56) {
+      setStatus('❌ Invalid address - must be 56 characters');
+      return;
+    }
     setLoading(true);
     setStatus('⏳ Checking trustline...');
     try {
