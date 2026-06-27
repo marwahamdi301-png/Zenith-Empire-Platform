@@ -108,10 +108,26 @@ export default function Marketplace() {
       setOrderStatus('❌ Enter your Stellar wallet address');
       return;
     }
-    setOrderStatus('⏳ Processing...');
-    setTimeout(() => {
-      setOrderStatus(`✅ Order confirmed! Send ${product.price.toLocaleString()} ZENITH to complete purchase. Seller will contact you within 24h.`);
-    }, 1500);
+    setOrderStatus('⏳ Processing payment on Stellar...');
+    try {
+      const response = await fetch('/api/pay-zenith', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: walletAddress,
+          amount: product.price.toString(),
+          memo: product.name
+        })
+      });
+      const data = await response.json();
+      if (data.success) {
+        setOrderStatus(`✅ Payment sent! TX: ${data.txHash?.slice(0,16)}... Seller will contact you within 24h.`);
+      } else {
+        setOrderStatus(`❌ Error: ${data.error}`);
+      }
+    } catch (err) {
+      setOrderStatus('❌ Payment failed. Check your wallet balance.');
+    }
   }
 
   return (
