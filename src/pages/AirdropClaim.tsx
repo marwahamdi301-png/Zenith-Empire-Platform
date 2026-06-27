@@ -71,12 +71,12 @@ export default function AirdropClaim() {
               {address.substring(0,20)}...{address.substring(52)}
             </div>
           </div>
-          <div className="text-gray-500 text-sm mb-4">⏰ Processing within 24 hours</div>
+          <div className="text-gray-500 text-sm mb-4">✅ Transaction sent on Stellar Mainnet</div>
           <div className="bg-yellow-900/30 border border-yellow-500/30 rounded-xl p-4">
             <div className="text-yellow-400 font-bold mb-2">🚀 Earn More ZENITH!</div>
             <div className="text-gray-400 text-sm">Share your referral link and earn 500 ZENITH per friend!</div>
             <button
-              onClick={() => navigator.clipboard?.writeText(`https://zenith-empire-cyan.vercel.app?ref=${address.substring(0,8)}`)}
+              onClick={() => navigator.clipboard?.writeText(`https://zenithempire.online?ref=${address.substring(0,8)}`)}
               className="mt-3 w-full py-2 bg-yellow-500 text-black font-bold rounded-lg text-sm"
             >
               📋 Copy Referral Link
