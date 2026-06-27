@@ -1,0 +1,13 @@
+[[CURRENCIES]]
+code="ZENITH"
+issuer="GA3T3OZ5V2JAZR5RCH3NII7JBNUMDPBSSXF6N6HKZGLTM5JSZCX7OTFQ"
+name="Baya Empire Digital"
+desc="African DeFi Gateway on Stellar Network - connecting North African agricultural exporters to European and Gulf markets"
+image="https://zenith-empire-cyan.vercel.app/logo.png"
+
+[DOCUMENTATION]
+ORG_NAME="Baya Empire Digital"
+ORG_URL="https://zenith-empire-cyan.vercel.app"
+ORG_TWITTER="ZenithEmpidxt2"
+ORG_GITHUB="marwahamdi301-png"
+ORG_OFFICIAL_EMAIL="leiladidi75@gmail.com"

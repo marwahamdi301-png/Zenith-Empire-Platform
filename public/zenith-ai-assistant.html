@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZENITH AI Brain</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Space+Mono&display=swap');
+:root {
+  --bg: #07070f;
+  --s1: #0f0f1a;
+  --s2: #161625;
+  --border: #1f1f35;
+  --gold: #f5c842;
+  --cyan: #00e5ff;
+  --purple: #7c3aed;
+  --green: #22c55e;
+  --red: #ef4444;
+  --text: #e8e8f0;
+  --muted: #5a5a7a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;min-height:100vh}
+
+/* Header */
+.header{background:linear-gradient(135deg,#0f0f1a,#1a0a2e);border-bottom:1px solid var(--border);padding:16px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.header-logo{font-family:'Space Mono',monospace;font-size:18px;color:var(--gold);font-weight:700}
+.header-logo span{color:var(--cyan)}
+.header-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:auto;box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* Tabs */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--s1);overflow-x:auto}
+.tab{flex:none;padding:12px 18px;font-family:'Cairo',sans-serif;font-size:13px;color:var(--muted);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s}
+.tab.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+.tab:hover{color:var(--text)}
+
+/* Pages */
+.page{display:none;padding:16px;max-width:800px;margin:0 auto}
+.page.active{display:block}
+
+/* Cards */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+.card-title{font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--cyan);text-transform:uppercase;margin-bottom:12px}
+
+/* Status Grid */
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.status-item{background:var(--s2);border-radius:8px;padding:10px 12px}
+.status-item .label{font-size:10px;color:var(--muted);margin-bottom:4px}
+.status-item .value{font-size:13px;font-weight:700}
+.status-item .value.green{color:var(--green)}
+.status-item .value.gold{color:var(--gold)}
+.status-item .value.cyan{color:var(--cyan)}
+.status-item .value.red{color:var(--red)}
+
+/* Priority List */
+.priority-list{display:flex;flex-direction:column;gap:8px}
+.priority-item{background:var(--s2);border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.2s;border:1px solid transparent}
+.priority-item:hover{border-color:var(--purple)}
+.priority-item.urgent{border-left:3px solid var(--red)}
+.priority-item.medium{border-left:3px solid var(--gold)}
+.priority-item.done{border-left:3px solid var(--green);opacity:0.6}
+.p-icon{font-size:20px;flex-shrink:0}
+.p-content{flex:1}
+.p-title{font-size:13px;font-weight:700}
+.p-desc{font-size:11px;color:var(--muted);margin-top:2px}
+.p-badge{font-size:10px;padding:3px 8px;border-radius:10px;font-weight:700}
+.badge-urgent{background:rgba(239,68,68,0.15);color:var(--red)}
+.badge-medium{background:rgba(245,200,66,0.15);color:var(--gold)}
+.badge-done{background:rgba(34,197,94,0.15);color:var(--green)}
+.badge-waiting{background:rgba(0,229,255,0.1);color:var(--cyan)}
+
+/* AI Chat */
+.chat-container{height:calc(100vh - 280px);overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-bottom:8px}
+.msg{max-width:88%;padding:12px 14px;border-radius:12px;font-size:13px;line-height:1.7}
+.msg.ai{background:var(--s2);border:1px solid var(--border);align-self:flex-start;border-bottom-right-radius:4px}
+.msg.user{background:linear-gradient(135deg,var(--purple),#4f46e5);align-self:flex-end;border-bottom-left-radius:4px}
+.msg.ai .msg-label{font-size:10px;color:var(--cyan);font-weight:700;margin-bottom:6px;letter-spacing:1px}
+
+.chat-input-area{background:var(--s1);border-top:1px solid var(--border);padding:12px 16px;position:sticky;bottom:0}
+.chat-row{display:flex;gap:8px}
+.chat-input{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Cairo',sans-serif;font-size:14px;padding:12px 14px;outline:none;resize:none;max-height:100px}
+.chat-input:focus{border-color:var(--purple)}
+.send-btn{background:var(--purple);border:none;border-radius:10px;color:white;padding:12px 16px;cursor:pointer;font-size:18px;transition:all 0.2s;flex-shrink:0}
+.send-btn:hover{background:#6d28d9}
+.send-btn:disabled{opacity:0.4;cursor:not-allowed}
+
+.quick-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.25);border-radius:16px;color:#a78bfa;font-family:'Cairo',sans-serif;font-size:11px;padding:5px 10px;cursor:pointer;transition:all 0.2s}
+.chip:hover{background:rgba(124,58,237,0.25)}
+
+/* Content Generator */
+.gen-types{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px}
+.gen-type{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 8px;text-align:center;cursor:pointer;transition:all 0.2s;font-family:'Cairo',sans-serif;font-size:12px;color:var(--muted)}
+.gen-type.active{border-color:var(--gold);color:var(--gold);background:rgba(245,200,66,0.07)}
+.gen-type .icon{font-size:18px;display:block;margin-bottom:4px}
+.lang-btns{display:flex;gap:6px;margin-bottom:12px}
+.lang-btn{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:'Cairo',sans-serif;font-size:12px;padding:8px;cursor:pointer;transition:all 0.2s}
+.lang-btn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,0.07)}
+.gen-input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;padding:12px;resize:none;min-height:80px;outline:none;margin-bottom:10px}
+.gen-input:focus{border-color:var(--purple)}
+.gen-btn{width:100%;background:linear-gradient(135deg,var(--purple),#4f46e5);border:none;border-radius:10px;color:white;font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;padding:14px;cursor:pointer;transition:all 0.2s}
+.gen-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,58,237,0.4)}
+.gen-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.output-box{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:12px;display:none}
+.output-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.output-label{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--gold);text-transform:uppercase}
+.copy-btn{background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.25);border-radius:6px;color:var(--gold);font-family:'Cairo',sans-serif;font-size:11px;padding:5px 12px;cursor:pointer}
+#gen-output{font-size:13px;line-height:1.8;white-space:pre-wrap}
+
+/* Spinner */
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Live Data */
+.live-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.live-row:last-child{border-bottom:none}
+.live-key{font-size:12px;color:var(--muted)}
+.live-val{font-size:13px;font-weight:700;color:var(--cyan);font-family:'Space Mono',monospace}
+
+/* Progress */
+.progress-bar{background:var(--s2);border-radius:4px;height:6px;margin-top:6px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--purple),var(--cyan));transition:width 1s}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-logo">⚡ ZENITH <span>AI</span></div>
+    <div class="header-sub">المساعد الذكي لمنصة Zenith Empire</div>
+  </div>
+  <div class="status-dot"></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showPage('dashboard')">📊 لوحة التحكم</button>
+  <button class="tab" onclick="showPage('chat')">🤖 مساعد AI</button>
+  <button class="tab" onclick="showPage('content')">✍️ محتوى</button>
+  <button class="tab" onclick="showPage('live')">📡 بيانات مباشرة</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+
+  <div class="card">
+    <div class="card-title">🚀 حالة المشروع</div>
+    <div class="status-grid">
+      <div class="status-item">
+        <div class="label">التوكن</div>
+        <div class="value green">✅ على Mainnet</div>
+      </div>
+      <div class="status-item">
+        <div class="label">Pi App Studio</div>
+        <div class="value gold">⏳ 9/10 خطوات</div>
+      </div>
+      <div class="status-item">
+        <div class="label">CoinGecko</div>
+        <div class="value cyan">📨 تذكرة مفتوحة</div>
+      </div>
+      <div class="status-item">
+        <div class="label">NVIDIA Inception</div>
+        <div class="value gold">⏳ بعد الدومين</div>
+      </div>
+      <div class="status-item">
+        <div class="label">AMM/Liquidity</div>
+        <div class="value green">✅ شغّال</div>
+      </div>
+      <div class="status-item">
+        <div class="label">الدومين</div>
+        <div class="value red">❌ لم يُشترى بعد</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 الأولويات الآن</div>
+    <div class="priority-list">
+      <div class="priority-item urgent" onclick="askAI('كيف أكمل الخطوة 10 في Pi App Studio؟')">
+        <div class="p-icon">🔟</div>
+        <div class="p-content">
+          <div class="p-title">إكمال الخطوة 10 — Pi App Studio</div>
+          <div class="p-desc">تحتاج دفعة Pi حقيقية — Pi في انتظار التحويل</div>
+        </div>
+        <div class="p-badge badge-urgent">عاجل</div>
+      </div>
+      <div class="priority-item urgent" onclick="askAI('ما هي أفضل دومينات لمشروع Zenith Empire وكيف أشتريها؟')">
+        <div class="p-icon">🌐</div>
+        <div class="p-content">
+          <div class="p-title">شراء دومين مهني</div>
+          <div class="p-desc">zenithempire.io أو bayaempire.com — غداً</div>
+        </div>
+        <div class="p-badge badge-urgent">غداً</div>
+      </div>
+      <div class="priority-item medium" onclick="askAI('كيف أقدم طلب NVIDIA Inception Program لمشروع Zenith Empire؟')">
+        <div class="p-icon">🚀</div>
+        <div class="p-content">
+          <div class="p-title">NVIDIA Inception Program</div>
+          <div class="p-desc">يحتاج إيميل مهني أولاً</div>
+        </div>
+        <div class="p-badge badge-medium">بعد الدومين</div>
+      </div>
+      <div class="priority-item medium" onclick="askAI('كيف أرد على CoinGecko لإدراج توكن ZENITH؟')">
+        <div class="p-icon">🦎</div>
+        <div class="p-content">
+          <div class="p-title">متابعة CoinGecko</div>
+          <div class="p-desc">تذكرة مفتوحة مع Nadine</div>
+        </div>
+        <div class="p-badge badge-medium">متابعة</div>
+      </div>
+      <div class="priority-item medium" onclick="askAI('كيف أسجل ZENITH على CoinMarketCap؟')">
+        <div class="p-icon">📈</div>
+        <div class="p-content">
+          <div class="p-title">تسجيل CoinMarketCap</div>
+          <div class="p-desc">خطوة مهمة للمصداقية</div>
+        </div>
+        <div class="p-badge badge-medium">قريباً</div>
+      </div>
+      <div class="priority-item done">
+        <div class="p-icon">✅</div>
+        <div class="p-content">
+          <div class="p-title">GitHub 2FA</div>
+          <div class="p-desc">مفعّل ومحمي</div>
+        </div>
+        <div class="p-badge badge-done">مكتمل</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 تقدم المشروع</div>
+    <div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+        <span>Pi App Studio</span><span style="color:var(--gold)">90%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:90%"></div></div>
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+        <span>CoinGecko Listing</span><span style="color:var(--cyan)">30%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:30%"></div></div>
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+        <span>البنية التقنية</span><span style="color:var(--green)">85%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div>
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+        <span>التسويق والمجتمع</span><span style="color:var(--red)">25%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div class="page" id="page-chat">
+  <div class="chat-container" id="chat-messages">
+    <div class="msg ai">
+      <div class="msg-label">⚡ ZENITH AI</div>
+      مرحباً! أنا مساعدك الذكي المتخصص في مشروع Zenith Empire. أعرف كل شيء عن توكن ZENITH على Stellar، Pi Network، CoinGecko، NVIDIA Inception، والمنصة كاملة.<br><br>
+      كيف يمكنني مساعدتك اليوم؟ 🚀
+    </div>
+  </div>
+
+  <div class="chat-input-area">
+    <div class="quick-chips">
+      <div class="chip" onclick="sendChip('ما الخطوة التالية الأهم الآن؟')">🎯 الخطوة التالية</div>
+      <div class="chip" onclick="sendChip('كيف أزيد trustlines لتوكن ZENITH؟')">📈 زيادة Trustlines</div>
+      <div class="chip" onclick="sendChip('اكتب رد احترافي لـ CoinGecko')">🦎 رد CoinGecko</div>
+      <div class="chip" onclick="sendChip('ما أفضل استراتيجية تسويق لـ ZENITH؟')">📣 استراتيجية</div>
+      <div class="chip" onclick="sendChip('كيف أسرع قبول Pi Network لتطبيقي؟')">🟣 Pi Network</div>
+    </div>
+    <div class="chat-row" style="margin-top:8px">
+      <textarea class="chat-input" id="chat-input" placeholder="اسألني أي شيء عن مشروعك..." rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+      <button class="send-btn" id="send-btn" onclick="sendMsg()">⬆</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT GENERATOR -->
+<div class="page" id="page-content">
+  <div class="card">
+    <div class="card-title">نوع المحتوى</div>
+    <div class="gen-types">
+      <div class="gen-type active" data-type="twitter" onclick="selectType(this)">
+        <span class="icon">🐦</span>Twitter
+      </div>
+      <div class="gen-type" data-type="telegram" onclick="selectType(this)">
+        <span class="icon">📢</span>Telegram
+      </div>
+      <div class="gen-type" data-type="coingecko" onclick="selectType(this)">
+        <span class="icon">🦎</span>CoinGecko
+      </div>
+      <div class="gen-type" data-type="investor" onclick="selectType(this)">
+        <span class="icon">💼</span>مستثمرين
+      </div>
+      <div class="gen-type" data-type="airdrop" onclick="selectType(this)">
+        <span class="icon">🎁</span>Airdrop
+      </div>
+      <div class="gen-type" data-type="rewrite" onclick="selectType(this)">
+        <span class="icon">✍️</span>إعادة صياغة
+      </div>
+    </div>
+
+    <div class="card-title" style="margin-top:12px">اللغة</div>
+    <div class="lang-btns">
+      <button class="lang-btn active" data-lang="ar" onclick="selectLang(this)">🇹🇳 عربي</button>
+      <button class="lang-btn" data-lang="en" onclick="selectLang(this)">🇬🇧 English</button>
+      <button class="lang-btn" data-lang="fr" onclick="selectLang(this)">🇫🇷 Français</button>
+    </div>
+
+    <div class="card-title">الموضوع</div>
+    <textarea class="gen-input" id="gen-input" placeholder="مثال: أعلن عن إطلاق Airdrop مجاني..."></textarea>
+
+    <div class="quick-chips" style="margin-bottom:12px">
+      <div class="chip" onclick="document.getElementById('gen-input').value='إعلان توكن ZENITH على Stellar Network'">إعلان التوكن</div>
+      <div class="chip" onclick="document.getElementById('gen-input').value='Airdrop مجاني لأول 1000 مستخدم'">Airdrop</div>
+      <div class="chip" onclick="document.getElementById('gen-input').value='شراكة مع Pi Network — 1 Pi = 1000 ZENITH'">شراكة Pi</div>
+      <div class="chip" onclick="document.getElementById('gen-input').value='مميزات منصة التجارة الزراعية الأفريقية'">المنصة الزراعية</div>
+      <div class="chip" onclick="document.getElementById('gen-input').value='سبب الاستثمار في ZENITH الآن'">للمستثمرين</div>
+    </div>
+
+    <button class="gen-btn" id="gen-btn" onclick="generateContent()">
+      ⚡ توليد المحتوى
+    </button>
+
+    <div class="output-box" id="output-box">
+      <div class="output-header">
+        <span class="output-label">✨ المحتوى الجاهز</span>
+        <button class="copy-btn" onclick="copyOutput()">نسخ</button>
+      </div>
+      <div id="gen-output"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE DATA -->
+<div class="page" id="page-live">
+  <div class="card">
+    <div class="card-title">📡 بيانات المنصة المباشرة</div>
+    <div id="live-data">
+      <div class="live-row">
+        <span class="live-key">التوكن</span>
+        <span class="live-val">ZENITH</span>
+      </div>
+      <div class="live-row">
+        <span class="live-key">الشبكة</span>
+        <span class="live-val">Stellar Mainnet</span>
+      </div>
+      <div class="live-row">
+        <span class="live-key">Issuer</span>
+        <span class="live-val" style="font-size:10px">GA3T3...OTFQ</span>
+      </div>
+      <div class="live-row">
+        <span class="live-key">العرض الكلي</span>
+        <span class="live-val">1,000,000,000</span>
+      </div>
+      <div class="live-row">
+        <span class="live-key">سعر XLM</span>
+        <span class="live-val" id="xlm-price">جاري التحميل...</span>
+      </div>
+      <div class="live-row">
+        <span class="live-key">الموقع</span>
+        <span class="live-val" style="font-size:10px">zenith-empire-cyan.vercel.app</span>
+      </div>
+      <div class="live-row">
+        <span class="live-key">Twitter</span>
+        <span class="live-val">@ZenithEmpidxt2</span>
+      </div>
+      <div class="live-row">
+        <span class="live-key">Telegram</span>
+        <span class="live-val">@BayaEmpireOfficial</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔗 روابط مهمة</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <a href="https://zenith-empire-cyan.vercel.app" target="_blank" style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--cyan);text-decoration:none;font-size:13px">🌐 المنصة الرئيسية</a>
+      <a href="https://stellar.expert/explorer/public/asset/ZENITH-GA3T3OZ5V2JAZR5RCH3NII7JBNUMDPBSSXF6N6HKZGLTM5JSZCX7OTFQ" target="_blank" style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--gold);text-decoration:none;font-size:13px">⭐ StellarExpert</a>
+      <a href="https://github.com/marwahamdi301-png/Zenith-Empire-Platform" target="_blank" style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);text-decoration:none;font-size:13px">📁 GitHub</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== PLATFORM KNOWLEDGE =====
+const ZENITH_CONTEXT = `أنت ZENITH AI — المساعد الذكي المتخصص حصرياً لمشروع Zenith Empire Token.
+
+معلومات المشروع الكاملة:
+- التوكن: ZENITH على Stellar Mainnet
+- الشركة: Baya Empire Digital
+- الرؤية: بوابة DeFi الأفريقية — تمكين المزارعين في المغرب العربي (تونس، المغرب، الجزائر) من التجارة مع أوروبا ودول الخليج
+- العرض الكلي: 1 مليار ZENITH
+- Issuer: GA3T3OZ5V2JAZR5RCH3NII7JBNUMDPBSSXF6N6HKZGLTM5JSZCX7OTFQ
+- Distributor: GB6TK6UPBQAIHYLPYGJDLCLXB2HLP452DPDNRNR2JETEDPSXKWOCXLZB (~994M ZENITH)
+- AMM Wallet: GDHT7NMOFE6SLJOOBFH5IDZVMGH3GSJIYK2DHJ7KLUQ64UAATA5AI4TR (~2M ZENITH)
+- التكامل مع Pi Network: 1 Pi = 1000 ZENITH
+- الموقع: https://zenith-empire-cyan.vercel.app
+- GitHub: github.com/marwahamdi301-png/Zenith-Empire-Platform
+- Twitter: @ZenithEmpidxt2
+- Telegram: @BayaEmpireOfficial
+
+الوضع الحالي:
+- Pi App Studio: 9/10 خطوات مكتملة (تحتاج دفعة Pi لإكمال الخطوة 10)
+- CoinGecko: تذكرة مفتوحة #130711 مع Nadine
+- NVIDIA Inception: جاهز بعد شراء دومين مهني
+- CoinMarketCap: لم يُقدَّم بعد
+- GitHub 2FA: مفعّل ✅
+- AMM/Liquidity Pool: شغّال ✅
+- الدومين المهني: لم يُشترى بعد
+
+الأولويات:
+1. شراء دومين (zenithempire.io أو bayaempire.com)
+2. إيميل مهني (info@zenithempire.io)
+3. إكمال الخطوة 10 في Pi App Studio
+4. متابعة CoinGecko
+5. تسجيل CoinMarketCap
+6. NVIDIA Inception Program
+7. زيادة حاملي التوكن والـ trustlines
+
+البيئة التقنية: Termux على Android، Node.js (.cjs)، React/Vite، Vercel CLI، Stellar Horizon API
+
+قواعد الإجابة:
+- كن محدداً وعملياً
+- أعط أوامر Termux جاهزة للتنفيذ عند الحاجة
+- لا تبالغ في الوعود
+- اذكر الحقائق الموجودة فعلاً
+- الردود باللغة العربية ما لم يُطلب غير ذلك`;
+
+// ===== STATE =====
+let genType = 'twitter';
+let genLang = 'ar';
+let chatHistory = [];
+
+// ===== NAVIGATION =====
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ===== DASHBOARD =====
+function askAI(question) {
+  showPage('chat');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab')[1].classList.add('active');
+  setTimeout(() => {
+    document.getElementById('chat-input').value = question;
+    sendMsg();
+  }, 100);
+}
+
+// ===== CHAT =====
+function addMsg(text, role) {
+  const container = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + (role === 'ai' ? 'ai' : 'user');
+  if (role === 'ai') {
+    div.innerHTML = '<div class="msg-label">⚡ ZENITH AI</div>' + text.replace(/\n/g, '<br>');
+  } else {
+    div.textContent = text;
+  }
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function sendChip(text) {
+  document.getElementById('chat-input').value = text;
+  sendMsg();
+}
+
+async function sendMsg() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  addMsg(text, 'user');
+  chatHistory.push({ role: 'user', content: text });
+  input.value = '';
+
+  const btn = document.getElementById('send-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'msg ai';
+  typingDiv.innerHTML = '<div class="msg-label">⚡ ZENITH AI</div><span class="spinner"></span> جاري التفكير...';
+  document.getElementById('chat-messages').appendChild(typingDiv);
+
+  try {
+    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json',
+            'Authorization': 'Bearer OPENROUTER_API_KEY_HERE' },
+      body: JSON.stringify({
+        model: 'anthropic/claude-3-haiku',
+        max_tokens: 1000,
+        messages: [{role:"system",content:ZENITH_CONTEXT},...chatHistory]
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'حدث خطأ، حاول مرة أخرى.';
+    typingDiv.innerHTML = '<div class="msg-label">⚡ ZENITH AI</div>' + reply.replace(/\n/g, '<br>');
+    chatHistory.push({ role: 'assistant', content: reply });
+  } catch {
+    typingDiv.innerHTML = '<div class="msg-label">⚡ ZENITH AI</div>خطأ في الاتصال. تأكد من الإنترنت.';
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '⬆';
+  document.getElementById('chat-messages').scrollTop = 999999;
+}
+
+// ===== CONTENT GENERATOR =====
+function selectType(el) {
+  document.querySelectorAll('.gen-type').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  genType = el.dataset.type;
+}
+
+function selectLang(el) {
+  document.querySelectorAll('.lang-btn').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  genLang = el.dataset.lang;
+}
+
+function getGenPrompt() {
+  const types = {
+    twitter: 'اكتب تغريدة احترافية جذابة (أقل من 280 حرف) مناسبة لـ Twitter/X مع هاشتاقات.',
+    telegram: 'اكتب منشور Telegram احترافي ومفصل مع emoji مناسبة.',
+    coingecko: 'اكتب رد احترافي لفريق CoinGecko لطلب إدراج توكن ZENITH مع كل المعلومات اللازمة.',
+    investor: 'اكتب وصفاً احترافياً للمستثمرين يبرز الفرصة الاستثمارية في ZENITH بأرقام وحقائق.',
+    airdrop: 'اكتب إعلاناً جذاباً ومقنعاً عن حملة Airdrop لتوكن ZENITH.',
+    rewrite: 'أعد صياغة النص التالي بأسلوب احترافي ومقنع مناسب لمشروع ZENITH.'
+  };
+  const langs = {
+    ar: 'اكتب باللغة العربية.',
+    en: 'Write in English.',
+    fr: 'Écris en français.'
+  };
+  return `${ZENITH_CONTEXT}\n\n${types[genType]}\n${langs[genLang]}\nقواعد: لا تختلق أرقاماً غير حقيقية، كن موثوقاً وجذاباً.`;
+}
+
+async function generateContent() {
+  const input = document.getElementById('gen-input').value.trim();
+  if (!input) { alert('أدخل موضوع المحتوى'); return; }
+
+  const btn = document.getElementById('gen-btn');
+  const box = document.getElementById('output-box');
+  const out = document.getElementById('gen-output');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> جاري التوليد...';
+  box.style.display = 'block';
+  out.textContent = '...';
+
+  try {
+    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json',
+            'Authorization': 'Bearer OPENROUTER_API_KEY_HERE' },
+      body: JSON.stringify({
+        model: 'anthropic/claude-3-haiku',
+        max_tokens: 1000,
+        system: getGenPrompt(),
+        messages: [{ role: 'user', content: input }]
+      })
+    });
+    const data = await res.json();
+    out.textContent = data.content?.[0]?.text || 'حدث خطأ.';
+  } catch {
+    out.textContent = 'خطأ في الاتصال.';
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '⚡ توليد المحتوى';
+}
+
+function copyOutput() {
+  navigator.clipboard.writeText(document.getElementById('gen-output').textContent).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✓ تم';
+    setTimeout(() => btn.textContent = 'نسخ', 2000);
+  });
+}
+
+// ===== LIVE DATA =====
+async function fetchXLM() {
+  try {
+    const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=stellar&vs_currencies=usd');
+    const data = await res.json();
+    document.getElementById('xlm-price').textContent = '$' + data.stellar.usd;
+  } catch {
+    document.getElementById('xlm-price').textContent = 'غير متاح';
+  }
+}
+fetchXLM();
+</script>
+</body>
+</html>

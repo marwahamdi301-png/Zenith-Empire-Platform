@@ -269,9 +269,39 @@ export default function Marketplace() {
 
             <button
               onClick={() => handleOrder(showOrder)}
-              className="w-full py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold rounded-lg"
+              className="w-full py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold rounded-lg mb-3"
             >
               ⚡ Confirm Order with ZENITH
+            </button>
+
+            <button
+              onClick={() => {
+                if (window.Pi) {
+                  const payment = window.Pi.createPayment({
+                    amount: (showOrder.priceUSD || 1),
+                    memo: `ZENITH Order: ${showOrder.name}`,
+                    metadata: { orderId: showOrder.id, product: showOrder.name }
+                  }, {
+                    onReadyForServerApproval: (paymentId) => {
+                      setOrderStatus('✅ Pi Payment initiated: ' + paymentId);
+                    },
+                    onReadyForServerCompletion: (paymentId, txid) => {
+                      setOrderStatus('🎉 Pi Payment complete! TX: ' + txid);
+                    },
+                    onCancel: (paymentId) => {
+                      setOrderStatus('❌ Payment cancelled');
+                    },
+                    onError: (error) => {
+                      setOrderStatus('❌ Error: ' + error.message);
+                    }
+                  });
+                } else {
+                  setOrderStatus('⚠️ Please open in Pi Browser to pay with Pi');
+                }
+              }}
+              className="w-full py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold rounded-lg"
+            >
+              π Pay with Pi
             </button>
           </div>
         </div>
