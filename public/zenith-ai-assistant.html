@@ -511,8 +511,9 @@ async function sendMsg() {
     const reply = data.choices?.[0]?.message?.content || 'حدث خطأ، حاول مرة أخرى.';
     typingDiv.innerHTML = '<div class="msg-label">⚡ ZENITH AI</div>' + reply.replace(/\n/g, '<br>');
     chatHistory.push({ role: 'assistant', content: reply });
-  } catch {
-    typingDiv.innerHTML = '<div class="msg-label">⚡ ZENITH AI</div>خطأ في الاتصال. تأكد من الإنترنت.';
+  } catch(err) {
+    console.error('AI Error:', err);
+    typingDiv.innerHTML = '<div class="msg-label">⚡ ZENITH AI</div>خطأ: ' + err.message;
   }
 
   btn.disabled = false;
