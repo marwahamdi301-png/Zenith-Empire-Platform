@@ -1214,18 +1214,13 @@ async function sendChat() {
   document.getElementById('chat-msgs').appendChild(typing);
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/zenith-ai', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 600,
-        system: ZENITH_BRAIN,
-        messages: chatHistory
-      })
+      body: JSON.stringify({ messages: [{role:'system',content:ZENITH_BRAIN},...chatHistory] })
     });
     const data = await res.json();
-    const reply = data.content?.[0]?.text || 'حدث خطأ، حاول مرة أخرى.';
+    const reply = data.choices?.[0]?.message?.content || 'حدث خطأ، حاول مرة أخرى.';
     typing.innerHTML = `<div class="msg-bubble">${reply.replace(/\n/g,'<br>')}</div><div class="msg-time">ZENITH AI · الآن</div>`;
     chatHistory.push({role:'assistant', content:reply});
   } catch {
