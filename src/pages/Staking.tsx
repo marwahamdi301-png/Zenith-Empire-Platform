@@ -91,7 +91,7 @@ export default function Staking() {
             className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm mb-3 focus:outline-none focus:border-blue-500"
           />
           <button
-            onClick={() => window.open('https://t.me/BayaEmpireOfficial', '_blank')}
+            onClick={() => window.open('https://t.me/BayaEmpirePro', '_blank')}
             className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl"
           >
             🔔 Join Waitlist on Telegram
