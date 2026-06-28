@@ -15,7 +15,7 @@ export default async function handler(req, res) {
       'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`
     },
     body: JSON.stringify({
-      model: 'anthropic/claude-haiku',
+      model: 'anthropic/claude-haiku-4-5',
       messages,
       max_tokens: 500
     })
