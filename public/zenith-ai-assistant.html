@@ -497,10 +497,10 @@ async function sendMsg() {
   document.getElementById('chat-messages').appendChild(typingDiv);
 
   try {
-    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const res = await fetch('/api/zenith-ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json',
-            'Authorization': 'Bearer OPENROUTER_API_KEY_HERE' },
+             },
       body: JSON.stringify({
         model: 'anthropic/claude-3-haiku',
         max_tokens: 1000,
@@ -564,10 +564,10 @@ async function generateContent() {
   out.textContent = '...';
 
   try {
-    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const res = await fetch('/api/zenith-ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json',
-            'Authorization': 'Bearer OPENROUTER_API_KEY_HERE' },
+             },
       body: JSON.stringify({
         model: 'anthropic/claude-3-haiku',
         max_tokens: 1000,
