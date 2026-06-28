@@ -508,7 +508,7 @@ async function sendMsg() {
       })
     });
     const data = await res.json();
-    const reply = data.content?.[0]?.text || 'حدث خطأ، حاول مرة أخرى.';
+    const reply = data.choices?.[0]?.message?.content || 'حدث خطأ، حاول مرة أخرى.';
     typingDiv.innerHTML = '<div class="msg-label">⚡ ZENITH AI</div>' + reply.replace(/\n/g, '<br>');
     chatHistory.push({ role: 'assistant', content: reply });
   } catch {
