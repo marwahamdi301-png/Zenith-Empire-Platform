@@ -298,10 +298,30 @@ export default function Marketplace() {
                     memo: `ZENITH Order: ${showOrder.name}`,
                     metadata: { orderId: showOrder.id, product: showOrder.name }
                   }, {
-                    onReadyForServerApproval: (paymentId) => {
-                      setOrderStatus('✅ Pi Payment initiated: ' + paymentId);
+                    onReadyForServerApproval: async (paymentId) => {
+                      setOrderStatus('⏳ Approving payment...');
+                      try {
+                        const res = await fetch('/api/pi-approve', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ paymentId })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                          setOrderStatus('✅ Payment approved! Waiting for confirmation...');
+                        }
+                      } catch (err) {
+                        setOrderStatus('❌ Approval failed: ' + err.message);
+                      }
                     },
-                    onReadyForServerCompletion: (paymentId, txid) => {
+                    onReadyForServerCompletion: async (paymentId, txid) => {
+                      try {
+                        await fetch('/api/pi-complete', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ paymentId, txid })
+                        });
+                      } catch (err) {}
                       setOrderStatus('🎉 Pi Payment complete! TX: ' + txid);
                     },
                     onCancel: (paymentId) => {
