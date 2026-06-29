@@ -8,6 +8,7 @@ import { TradingView } from './components/trading/TradingView';
 import { SecurityView } from './components/wallet/SecurityView';
 import { initAndAuthPi } from './lib/piAuth';
 import PiExchange from './pages/PiExchange';
+import PiVerifyPage from './pages/PiVerifyPage';
 
 function App() {
   useEffect(() => { initAndAuthPi(); }, []);
@@ -21,6 +22,8 @@ function App() {
         return <TradingView />;
       case 'security':
         return <SecurityView />;
+      case 'pi-verify':
+        return <PiVerifyPage />;
       case 'pi-exchange':
         return <PiExchange />;
       default:

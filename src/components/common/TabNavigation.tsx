@@ -7,6 +7,7 @@ import { AdminDashboard } from '../admin/AdminDashboard';
 import { WalletPage }     from '../wallet/WalletPage';
 import { TrustlineGuide } from '../wallet/TrustlineGuide';
 import PiExchange         from '../../pages/PiExchange';
+import PiVerifyPage      from '../../pages/PiVerifyPage';
 import Marketplace        from '../../pages/Marketplace';
 import SellerRegister     from '../../pages/SellerRegister';
 import Analytics          from '../../pages/Analytics';
@@ -14,7 +15,7 @@ import AirdropClaim       from '../../pages/AirdropClaim';
 import Staking            from '../../pages/Staking';
 import Transparency       from '../../pages/Transparency';
 
-type TabType = 'dashboard' | 'trading' | 'mining' | 'wallet' | 'market' | 'guide' | 'pi' | 'admin';
+type TabType = 'dashboard' | 'trading' | 'mining' | 'wallet' | 'market' | 'guide' | 'pi' | 'pi-verify' | 'admin';
 
 export function TabNavigation() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
@@ -26,6 +27,7 @@ export function TabNavigation() {
     { id: 'wallet',    label: 'المحافظ',  icon: Wallet,           color: 'text-yellow-400' },
     { id: 'market',    label: 'السوق',    icon: ShoppingBag,      color: 'text-green-400'  },
     { id: 'guide',     label: 'ZENITH',   icon: BookOpen,         color: 'text-yellow-400' },
+    { id: 'pi-verify', label: 'KYC', icon: ShieldCheck, color: 'text-green-400' },
     { id: 'pi',        label: 'Pi',       icon: () => <span className="text-lg font-bold">π</span>, color: 'text-purple-400' },
     { id: 'transparency', label: 'ثقة', icon: () => <span className="text-lg">🔍</span>, color: 'text-green-400' },
     { id: 'airdrop',   label: 'Airdrop',  icon: () => <span className="text-lg">🎁</span>, color: 'text-yellow-400' },
@@ -50,6 +52,7 @@ export function TabNavigation() {
         {activeTab === 'seller'    && <SellerRegister />}
         {activeTab === 'guide'     && <TrustlineGuide />}
         {activeTab === 'pi'        && <PiExchange />}
+        {activeTab === 'pi-verify' && <PiVerifyPage />}
         {activeTab === 'admin'     && <AdminDashboard />}
       </main>
 
