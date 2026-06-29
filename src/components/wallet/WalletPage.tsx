@@ -87,7 +87,7 @@ export function WalletPage() {
       {/* المحافظ */}
       {visibleWallets.map(w => {
         const b = bals[w.key] || { xlm: '—', zenith: '—', xlmRaw: 0, loading: false };
-        const lowXlm = !b.loading && b.xlmRaw > 0 && b.xlmRaw < XLM_WARNING;
+        const lowXlm = w.key === 'dist' && !b.loading && b.xlmRaw > 0 && b.xlmRaw < XLM_WARNING;
         return (
           <div key={w.key} className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
             <div className={`bg-gradient-to-r ${w.color} p-0.5`}>
