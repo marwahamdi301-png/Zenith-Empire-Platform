@@ -9,6 +9,7 @@ export const initPiNetwork = () => {
 };
 
 export const authenticateWithPi = async () => {
+  initPiNetwork();
   const auth = await window.Pi.authenticate(
     ["payments", "username", "wallet_address"],
     onIncompletePayment
@@ -62,12 +63,8 @@ export const createPiToZenithPayment = async (
           body: JSON.stringify({ paymentId, txid })
         });
       },
-      onCancel: (paymentId: string) => {
-        console.log("cancelled:", paymentId);
-      },
-      onError: (error: any) => {
-        console.error("error:", error);
-      }
+      onCancel: (paymentId: string) => console.log("cancelled:", paymentId),
+      onError: (error: any) => console.error("error:", error)
     }
   );
 };
@@ -76,3 +73,41 @@ export const getExchangeRate = () => ({
   pi_to_zenith: 1000,
   zenith_to_pi: 0.001
 });
+
+// Pi Sign-in 2026 - تسجيل دخول عبر Pi خارج Pi Browser
+export const piSignIn = async () => {
+  initPiNetwork();
+  try {
+    const auth = await window.Pi.authenticate(
+      ["username", "wallet_address"],
+      async (payment: any) => {
+        await fetch("/api/pi/complete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentId: payment.identifier })
+        });
+      }
+    );
+    const user = {
+      username: auth.user.username,
+      uid: auth.user.uid,
+      walletAddress: auth.user.wallet_address,
+      accessToken: auth.accessToken,
+      verified: true
+    };
+    localStorage.setItem("pi_user", JSON.stringify(user));
+    return user;
+  } catch (e) {
+    console.error("Pi Sign-in failed:", e);
+    return null;
+  }
+};
+
+export const getPiUser = () => {
+  const u = localStorage.getItem("pi_user");
+  return u ? JSON.parse(u) : null;
+};
+
+export const piSignOut = () => {
+  localStorage.removeItem("pi_user");
+};
