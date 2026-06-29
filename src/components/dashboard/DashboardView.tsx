@@ -88,9 +88,9 @@ export function DashboardView() {
         })}
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid gap-4">
         {/* Portfolio Chart */}
-        <div className="lg:col-span-2 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
+        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-4">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-white">Portfolio Performance</h2>
             <div className="flex gap-2">
@@ -105,7 +105,7 @@ export function DashboardView() {
             </div>
           </div>
           
-          <div className="h-64 bg-gray-900/50 rounded-lg p-4 flex items-end justify-between gap-2">
+          <div className="h-40 bg-gray-900/50 rounded-lg p-4 flex items-end justify-between gap-2">
             {[65, 78, 45, 89, 67, 92, 54, 88, 76, 95, 68, 82].map((height, i) => (
               <div key={i} className="flex-1 flex flex-col justify-end group">
                 <div
