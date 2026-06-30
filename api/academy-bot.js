@@ -1,7 +1,6 @@
-const TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8734851297:AAFiO68LkzPCv-cYO240IMdctsN6P9xgVFk';
+const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TG_API = `https://api.telegram.org/bot${TOKEN}`;
 
-// قاعدة بيانات بسيطة في الذاكرة (تُستبدل لاحقاً بـ KV/DB دائم)
 let users = global.__zenithUsers || {};
 global.__zenithUsers = users;
 
@@ -50,7 +49,6 @@ export default async function handler(req, res) {
   const update = req.body;
 
   try {
-    // ===== رسالة نصية =====
     if (update.message) {
       const msg = update.message;
       const id = msg.chat.id;
@@ -111,7 +109,6 @@ export default async function handler(req, res) {
       }
     }
 
-    // ===== Callback (الدروس والإجابات) =====
     else if (update.callback_query) {
       const query = update.callback_query;
       const id = query.message.chat.id;
