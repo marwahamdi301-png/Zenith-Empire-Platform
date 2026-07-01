@@ -17,3 +17,4 @@ send_zenith.cjs
 trust_new.cjs
 send-*.cjs
 fix-*.cjs
+nohup.out
