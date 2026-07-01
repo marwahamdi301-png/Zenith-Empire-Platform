@@ -9,9 +9,17 @@ const CONFIG = {
   spread: 0.02,
   basePrice: 0.001,
   orderSize: 100,
-  levels: 3,
-  refreshInterval: 300000
+  levels: 2,
+  refreshInterval: 300000,
+  minXlmReserveBuffer: 4.5 // الحد الأدنى + هامش أمان قبل ما نوقف التداول تلقائيًا
 };
+
+async function checkReserve(keypair) {
+  const account = await server.loadAccount(keypair.publicKey());
+  const xlmBalance = account.balances.find(b => b.asset_type === 'native');
+  const available = parseFloat(xlmBalance.balance) - parseFloat(xlmBalance.selling_liabilities || 0);
+  return available;
+}
 
 async function cancelAllOffers(keypair) {
   const offers = await server.offers().forAccount(keypair.publicKey()).call();
@@ -77,7 +85,7 @@ async function placeOrders(keypair) {
     const result = await server.submitTransaction(tx);
     console.log('✅ Orders placed:', result.hash);
   } catch(e) {
-    console.error('❌ result_codes:', e.response?.data?.extras?.result_codes);
+    console.error('❌ result_codes:', JSON.stringify(e.response?.data?.extras?.result_codes));
   }
 }
 
@@ -87,6 +95,15 @@ async function runMarketMaker() {
 
   while (true) {
     try {
+      const available = await checkReserve(keypair);
+      console.log(`💰 XLM available: ${available.toFixed(4)}`);
+
+      if (available < CONFIG.minXlmReserveBuffer) {
+        console.error(`🛑 XLM balance too low (${available.toFixed(4)} < ${CONFIG.minXlmReserveBuffer}). Market maker paused. Fund the wallet to resume.`);
+        await new Promise(r => setTimeout(r, CONFIG.refreshInterval));
+        continue;
+      }
+
       await cancelAllOffers(keypair);
       await placeOrders(keypair);
       console.log(`⏰ Next refresh in ${CONFIG.refreshInterval/1000}s`);
