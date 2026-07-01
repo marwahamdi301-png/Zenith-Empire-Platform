@@ -8,3 +8,5 @@ build/
 *.log
 .vercel
 .DS_Store
+mm-log.txt
+*.log
