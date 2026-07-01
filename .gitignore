@@ -10,3 +10,10 @@ build/
 .DS_Store
 mm-log.txt
 *.log
+rescue.cjs
+fund_new.cjs
+send_xlm.cjs
+send_zenith.cjs
+trust_new.cjs
+send-*.cjs
+fix-*.cjs
