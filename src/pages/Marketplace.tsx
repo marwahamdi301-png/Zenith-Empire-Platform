@@ -301,7 +301,7 @@ export default function Marketplace() {
                     onReadyForServerApproval: async (paymentId) => {
                       setOrderStatus('⏳ Approving payment...');
                       try {
-                        const res = await fetch('/api/pi-approve', {
+                        const res = await fetch('/api/pi/approve', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({ paymentId })
@@ -316,7 +316,7 @@ export default function Marketplace() {
                     },
                     onReadyForServerCompletion: async (paymentId, txid) => {
                       try {
-                        await fetch('/api/pi-complete', {
+                        await fetch('/api/pi/complete', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({ paymentId, txid })

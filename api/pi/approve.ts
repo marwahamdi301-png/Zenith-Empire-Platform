@@ -9,7 +9,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       {
         method: "POST",
         headers: {
-          Authorization: `Key ${process.env.PI_NETWORK_API_KEY}`,
+          Authorization: `Key ${process.env.PI_API_KEY}`,
           "Content-Type": "application/json"
         }
       }
