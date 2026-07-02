@@ -1,12 +1,40 @@
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TG_API = `https://api.telegram.org/bot${TOKEN}`;
+const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
+const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-let users = global.__zenithUsers || {};
-global.__zenithUsers = users;
+async function redisCmd(...args) {
+  const res = await fetch(UPSTASH_URL, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${UPSTASH_TOKEN}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(args)
+  });
+  const data = await res.json();
+  return data.result;
+}
 
-function getUser(id) {
-  if (!users[id]) users[id] = { zen: 0, level: 1, lessons: [], referrals: 0, referred: false };
-  return users[id];
+const DEFAULT_USER = () => ({ zen: 0, level: 1, lessons: [], referrals: 0, referred: false });
+
+async function getUser(id) {
+  const raw = await redisCmd('GET', `academy:user:${id}`);
+  if (raw) return JSON.parse(raw);
+  const fresh = DEFAULT_USER();
+  await saveUser(id, fresh);
+  return fresh;
+}
+
+async function saveUser(id, user) {
+  await redisCmd('SET', `academy:user:${id}`, JSON.stringify(user));
+  await redisCmd('ZADD', 'academy:leaderboard', user.zen, String(id));
+}
+
+async function getLeaderboard(limit = 10) {
+  const raw = await redisCmd('ZREVRANGE', 'academy:leaderboard', 0, limit - 1, 'WITHSCORES');
+  const result = [];
+  for (let i = 0; i < raw.length; i += 2) {
+    result.push({ uid: raw[i], zen: parseInt(raw[i + 1]) });
+  }
+  return result;
 }
 
 async function send(chatId, text, extra = {}) {
@@ -53,16 +81,18 @@ export default async function handler(req, res) {
       const msg = update.message;
       const id = msg.chat.id;
       const text = msg.text || '';
-      const user = getUser(id);
+      const user = await getUser(id);
 
       if (text.startsWith('/start')) {
         const parts = text.split(' ');
         const ref = parts[1];
         if (ref && ref !== String(id) && !user.referred) {
-          const referrer = getUser(ref);
+          const referrer = await getUser(ref);
           referrer.zen += 500;
           referrer.referrals += 1;
+          await saveUser(ref, referrer);
           user.referred = true;
+          await saveUser(id, user);
           await send(ref, `🎉 صديق جديد انضم بإحالتك! +500 ZEN`);
         }
 
@@ -93,11 +123,11 @@ export default async function handler(req, res) {
         await send(id, `👥 *برنامج الإحالة*\n\nشارك واكسب *500 ZEN* لكل صديق!\n\n🔗 \`${link}\`\n\nإحالاتك: *${user.referrals}*\nمكافآت: *${user.referrals * 500} ZEN*`);
       }
       else if (text === '🏆 المتصدرين') {
-        const sorted = Object.entries(users).sort(([,a],[,b]) => b.zen - a.zen).slice(0, 10);
+        const sorted = await getLeaderboard(10);
         let board = '🏆 *المتصدرون:*\n\n';
         const medals = ['🥇','🥈','🥉'];
-        sorted.forEach(([uid, u], i) => { board += `${medals[i] || `${i+1}.`} User${String(uid).slice(-4)}: *${u.zen} ZEN*\n`; });
-        await send(id, board || 'لا يوجد متصدرون بعد');
+        sorted.forEach((u, i) => { board += `${medals[i] || `${i+1}.`} User${String(u.uid).slice(-4)}: *${u.zen} ZEN*\n`; });
+        await send(id, sorted.length ? board : 'لا يوجد متصدرون بعد');
       }
       else if (text === '🌐 المنصة') {
         await send(id, `🌐 *Zenith Empire Platform*\n\nzenithempire.online\n\n⚡ تداول • Pi Sign-in • PiVerify • Staking • Marketplace`, {
@@ -113,7 +143,7 @@ export default async function handler(req, res) {
       const query = update.callback_query;
       const id = query.message.chat.id;
       const data = query.data;
-      const user = getUser(id);
+      const user = await getUser(id);
 
       if (data.startsWith('lesson_')) {
         const lessonId = parseInt(data.split('_')[1]);
@@ -142,6 +172,7 @@ export default async function handler(req, res) {
           user.zen += lesson.reward;
           user.lessons.push(lessonId);
           user.level = Math.floor(user.lessons.length / 2) + 1;
+          await saveUser(id, user);
           const allDone = user.lessons.length === LESSONS.length ? '\n\n🏆 أكملت جميع الدروس! أنت Pioneer حقيقي!' : '';
           await send(id, `✅ *إجابة صحيحة!*\n\n🎉 +${lesson.reward} ZEN\n💰 رصيدك: *${user.zen} ZEN*\n📊 مستواك: *${user.level}*${allDone}`);
           await answerCallback(query.id, '✅ صحيح!');
