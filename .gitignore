@@ -18,3 +18,5 @@ trust_new.cjs
 send-*.cjs
 fix-*.cjs
 nohup.out
+.env.temp
+.env*

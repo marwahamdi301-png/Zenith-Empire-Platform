@@ -57,7 +57,7 @@ export const initAndAuthPi = async (): Promise<PiUser | null> => {
 // التحقق من Token عبر الخادم
 const validateWithBackend = async (accessToken: string): Promise<boolean> => {
   try {
-    const res = await fetch("/api/pi/validate", {
+    const res = await fetch("/api/pi-handler?action=validate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ accessToken })
@@ -70,7 +70,7 @@ const validateWithBackend = async (accessToken: string): Promise<boolean> => {
 };
 
 const onIncompletePayment = async (payment: any) => {
-  await fetch("/api/pi/complete", {
+  await fetch("/api/pi-handler?action=complete", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

@@ -23,7 +23,7 @@ export const authenticateWithPi = async () => {
 };
 
 const onIncompletePayment = async (payment: any) => {
-  await fetch("/api/pi/complete", {
+  await fetch("/api/pi-handler?action=complete", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -50,14 +50,14 @@ export const createPiToZenithPayment = async (
     },
     {
       onReadyForServerApproval: async (paymentId: string) => {
-        await fetch("/api/pi/approve", {
+        await fetch("/api/pi-handler?action=approve", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ paymentId })
         });
       },
       onReadyForServerCompletion: async (paymentId: string, txid: string) => {
-        await fetch("/api/pi/complete", {
+        await fetch("/api/pi-handler?action=complete", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ paymentId, txid })
@@ -81,7 +81,7 @@ export const piSignIn = async () => {
     const auth = await window.Pi.authenticate(
       ["username", "wallet_address"],
       async (payment: any) => {
-        await fetch("/api/pi/complete", {
+        await fetch("/api/pi-handler?action=complete", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ paymentId: payment.identifier })

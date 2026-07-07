@@ -2,6 +2,7 @@ const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TG_API = `https://api.telegram.org/bot${TOKEN}`;
 const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
 const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID;
 
 async function redisCmd(...args) {
   const res = await fetch(UPSTASH_URL, {
@@ -13,10 +14,10 @@ async function redisCmd(...args) {
   return data.result;
 }
 
-const DEFAULT_USER = () => ({ zen: 0, level: 1, lessons: [], referrals: 0, referred: false });
+const DEFAULT_USER = () => ({ points: 0, referrals: 0, referred: false, awaitingSellerInfo: false });
 
 async function getUser(id) {
-  const raw = await redisCmd('GET', `academy:user:${id}`);
+  const raw = await redisCmd('GET', `hub:user:${id}`);
   if (raw) return JSON.parse(raw);
   const fresh = DEFAULT_USER();
   await saveUser(id, fresh);
@@ -24,17 +25,21 @@ async function getUser(id) {
 }
 
 async function saveUser(id, user) {
-  await redisCmd('SET', `academy:user:${id}`, JSON.stringify(user));
-  await redisCmd('ZADD', 'academy:leaderboard', user.zen, String(id));
+  await redisCmd('SET', `hub:user:${id}`, JSON.stringify(user));
+  await redisCmd('ZADD', 'hub:leaderboard', user.points, String(id));
 }
 
 async function getLeaderboard(limit = 10) {
-  const raw = await redisCmd('ZREVRANGE', 'academy:leaderboard', 0, limit - 1, 'WITHSCORES');
+  const raw = await redisCmd('ZREVRANGE', 'hub:leaderboard', 0, limit - 1, 'WITHSCORES');
   const result = [];
   for (let i = 0; i < raw.length; i += 2) {
-    result.push({ uid: raw[i], zen: parseInt(raw[i + 1]) });
+    result.push({ uid: raw[i], points: parseInt(raw[i + 1]) });
   }
   return result;
+}
+
+async function saveSellerLead(id, text) {
+  await redisCmd('SET', `hub:seller:${id}:${Date.now()}`, text);
 }
 
 async function send(chatId, text, extra = {}) {
@@ -53,26 +58,17 @@ async function answerCallback(id, text) {
   });
 }
 
-const LESSONS = [
-  { id: 1, title: '🌟 ما هو Stellar Blockchain؟', reward: 100,
-    content: `*الدرس 1: Stellar Blockchain*\n\n🔷 Stellar شبكة blockchain مفتوحة المصدر:\n• تحويلات سريعة (3 ثوانٍ)\n• رسوم منخفضة جداً\n• ربط العملات المختلفة\n\n🪙 XLM هو العملة الأصلية\n⚡ ZENITH مبني على Stellar\n\n✅ أجب لتكسب *100 ZEN*:`,
-    quiz: { options: ['10 دقائق', '3 ثوانٍ', 'يوم كامل', 'ساعة'], correct: 1 }},
-  { id: 2, title: '💎 ما هو ZENITH Token؟', reward: 150,
-    content: `*الدرس 2: ZENITH Token*\n\n⚡ ZENITH token أفريقي على Stellar:\n• تسوية صادرات أفريقيا\n• ربط أفريقيا بأوروبا والخليج\n• يستهدف 54 دولة\n\n📊 Total Supply: 1,000,000,000\n\n✅ أجب لتكسب *150 ZEN*:`,
-    quiz: { options: ['10 دول', '20 دولة', '54 دولة', '100 دولة'], correct: 2 }},
-  { id: 3, title: '🔐 ما هو Pi Sign-in؟', reward: 200,
-    content: `*الدرس 3: Pi Sign-in 2026*\n\n🆕 يتيح تسجيل الدخول لتطبيقات خارجية بحساب Pi\nبدون كلمة مرور، وصول لـ 18M+ Pioneer موثّق\n\n🔗 Zenith Empire يدعمه بالكامل!\n\n✅ أجب لتكسب *200 ZEN*:`,
-    quiz: { options: ['1 مليون', '5 ملايين', '18 مليون', '100 مليون'], correct: 2 }},
-  { id: 4, title: '💰 كيف يعمل Staking؟', reward: 250,
-    content: `*الدرس 4: Staking*\n\n💎 30 يوم = 12% | 90 يوم = 25%\n180 يوم = 50% | 365 يوم = 100%\n\n✅ أجب لتكسب *250 ZEN*:`,
-    quiz: { options: ['12%', '25%', '50%', '100%'], correct: 3 }},
-  { id: 5, title: '🛡️ ما هو PiVerify؟', reward: 300,
-    content: `*الدرس 5: PiVerify*\n\n🛡️ يفتح KYC الخاص بـ Pi للشركات الخارجية\nيتحقق أن المستخدم Pioneer حقيقي، يمنع الحسابات المزيفة\n\n✅ أجب لتكسب *300 ZEN*:`,
-    quiz: { options: ['التداول', 'التحقق من الهوية', 'الدفع', 'التعدين'], correct: 1 }},
+const CATEGORIES = [
+  { id: 'oils', title: '🫒 زيوت (زيتون، أركان، حبة سوداء)' },
+  { id: 'dates', title: '🌴 تمور' },
+  { id: 'spices', title: '🌶️ بهارات وتوابل' },
+  { id: 'textiles', title: '🧵 نسيج وسجاد' },
+  { id: 'ceramics', title: '🏺 فخار وزليج' },
+  { id: 'honey', title: '🍯 عسل طبيعي' },
 ];
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(200).json({ status: 'Zenith Academy Bot Webhook Active ✅' });
+  if (req.method !== 'POST') return res.status(200).json({ status: 'Zenith Trade Hub Bot Active ✅' });
 
   const update = req.body;
 
@@ -83,59 +79,71 @@ export default async function handler(req, res) {
       const text = msg.text || '';
       const user = await getUser(id);
 
+      // استقبال معلومات بائع جديد (بعد الضغط على "سجل كمورّد")
+      if (user.awaitingSellerInfo && !text.startsWith('/')) {
+        await saveSellerLead(id, text);
+        user.awaitingSellerInfo = false;
+        user.points += 50;
+        await saveUser(id, user);
+        await send(id, `✅ *تم استلام طلبك!*\n\nسنراجع بياناتك ونتواصل معك خلال 48 ساعة.\n\n🎁 +50 نقطة ولاء لتسجيلك.`);
+        if (ADMIN_CHAT_ID) {
+          await send(ADMIN_CHAT_ID, `🆕 *طلب مورّد جديد*\n\nمن: ${id}\n\n${text}`);
+        }
+        return res.status(200).json({ ok: true });
+      }
+
       if (text.startsWith('/start')) {
         const parts = text.split(' ');
         const ref = parts[1];
         if (ref && ref !== String(id) && !user.referred) {
           const referrer = await getUser(ref);
-          referrer.zen += 500;
+          referrer.points += 30;
           referrer.referrals += 1;
           await saveUser(ref, referrer);
           user.referred = true;
           await saveUser(id, user);
-          await send(ref, `🎉 صديق جديد انضم بإحالتك! +500 ZEN`);
+          await send(ref, `🎉 صديق جديد انضم عبر رابطك! +30 نقطة ولاء`);
         }
 
-        await send(id, `⚡ *مرحباً في Zenith Academy!*\n\nتعلّم blockchain وكسب ZEN tokens 🎓\n\n💎 رصيدك: *${user.zen} ZEN*\n📊 مستواك: *${user.level}*\n📚 دروس مكتملة: *${user.lessons.length}*\n\nابدأ رحلتك! 🚀`, {
+        await send(id, `🌍 *مرحباً في Zenith Trade Hub!*\n\nمنصة تربط منتجين من تونس، المغرب، والجزائر بمشترين في أوروبا والخليج مباشرة.\n\n⭐ نقاطك: *${user.points}*\n\nكيف نقدر نساعدك؟`, {
           reply_markup: {
             keyboard: [
-              ['📚 الدروس', '💰 رصيدي'],
-              ['👥 الإحالة', '🏆 المتصدرين'],
-              ['🌐 المنصة', 'ℹ️ عن ZENITH']
+              ['🛒 تصفح المنتجات', '🏪 سجل كمورّد'],
+              ['📞 تواصل مباشر', '⭐ نقاطي'],
+              ['👥 دعوة صديق', '🌐 الموقع']
             ],
             resize_keyboard: true
           }
         });
       }
-      else if (text === '📚 الدروس') {
-        const buttons = LESSONS.map(l => [{
-          text: `${user.lessons.includes(l.id) ? '✅' : '📖'} ${l.title} (+${l.reward} ZEN)`,
-          callback_data: `lesson_${l.id}`
-        }]);
-        await send(id, '📚 *اختر درساً:*', { reply_markup: { inline_keyboard: buttons } });
+      else if (text === '🛒 تصفح المنتجات') {
+        const buttons = CATEGORIES.map(c => [{ text: c.title, callback_data: `cat_${c.id}` }]);
+        await send(id, '🛒 *اختر فئة المنتجات:*', { reply_markup: { inline_keyboard: buttons } });
       }
-      else if (text === '💰 رصيدي') {
-        const tier = user.zen >= 1000 ? 'Pioneer 🥇' : user.zen >= 500 ? 'Explorer 🥈' : 'Beginner 🥉';
-        await send(id, `💰 *رصيدك*\n\n⚡ ZEN: *${user.zen}*\n📊 المستوى: *${user.level}*\n📚 الدروس: *${user.lessons.length}/${LESSONS.length}*\n👥 الإحالات: *${user.referrals}*\n\n🏆 ${tier}`);
+      else if (text === '🏪 سجل كمورّد') {
+        user.awaitingSellerInfo = true;
+        await saveUser(id, user);
+        await send(id, `🏪 *سجل كمورّد جديد*\n\nأرسل رسالة واحدة تحتوي:\n1. اسم النشاط التجاري\n2. الدولة والمدينة\n3. المنتجات اللي تصدّرها\n4. رقم واتساب للتواصل\n\n📩 اكتبها كلها في رسالة واحدة وأرسلها الآن:`);
       }
-      else if (text === '👥 الإحالة') {
-        const link = `https://t.me/Baya_tradingbot?start=${id}`;
-        await send(id, `👥 *برنامج الإحالة*\n\nشارك واكسب *500 ZEN* لكل صديق!\n\n🔗 \`${link}\`\n\nإحالاتك: *${user.referrals}*\nمكافآت: *${user.referrals * 500} ZEN*`);
-      }
-      else if (text === '🏆 المتصدرين') {
-        const sorted = await getLeaderboard(10);
-        let board = '🏆 *المتصدرون:*\n\n';
-        const medals = ['🥇','🥈','🥉'];
-        sorted.forEach((u, i) => { board += `${medals[i] || `${i+1}.`} User${String(u.uid).slice(-4)}: *${u.zen} ZEN*\n`; });
-        await send(id, sorted.length ? board : 'لا يوجد متصدرون بعد');
-      }
-      else if (text === '🌐 المنصة') {
-        await send(id, `🌐 *Zenith Empire Platform*\n\nzenithempire.online\n\n⚡ تداول • Pi Sign-in • PiVerify • Staking • Marketplace`, {
-          reply_markup: { inline_keyboard: [[{ text: '🚀 افتح المنصة', url: 'https://zenithempire.online' }]] }
+      else if (text === '📞 تواصل مباشر') {
+        await send(id, `📞 *تواصل معنا مباشرة*\n\nفريقنا يرد على كل استفسار شخصياً:`, {
+          reply_markup: { inline_keyboard: [
+            [{ text: '💬 انضم لقناة تيليجرام', url: 'https://t.me/BayaEmpireOfficial' }]
+          ] }
         });
       }
-      else if (text === 'ℹ️ عن ZENITH') {
-        await send(id, `ℹ️ *ZENITH Token*\n\n🌍 أول token أفريقي على Stellar\n📊 Supply: 1,000,000,000\n⚡ Stellar Mainnet\n\nمدعوم بـ Pi2Day 2026: Pi Sign-in ✅ PiVerify ✅`);
+      else if (text === '⭐ نقاطي') {
+        const tier = user.points >= 200 ? '🥇 شريك ذهبي' : user.points >= 100 ? '🥈 شريك فضي' : '🥉 عضو جديد';
+        await send(id, `⭐ *رصيد نقاطك*\n\nالنقاط: *${user.points}*\nالإحالات: *${user.referrals}*\n\n🏆 مستواك: ${tier}\n\n(النقاط تُستخدم لعرض منتجاتك بشكل مميز في السوق لاحقاً)`);
+      }
+      else if (text === '👥 دعوة صديق') {
+        const link = `https://t.me/Baya_tradingbot?start=${id}`;
+        await send(id, `👥 *ادعُ مورّد أو مشترٍ جديد*\n\nاكسب *30 نقطة* لكل صديق ينضم!\n\n🔗 \`${link}\``);
+      }
+      else if (text === '🌐 الموقع') {
+        await send(id, `🌐 *Zenith Trade Hub*\n\nzenithempire.online\n\nتصفح كل المنتجات والموردين على الموقع مباشرة.`, {
+          reply_markup: { inline_keyboard: [[{ text: '🚀 افتح الموقع', url: 'https://zenithempire.online' }]] }
+        });
       }
     }
 
@@ -143,43 +151,14 @@ export default async function handler(req, res) {
       const query = update.callback_query;
       const id = query.message.chat.id;
       const data = query.data;
-      const user = await getUser(id);
 
-      if (data.startsWith('lesson_')) {
-        const lessonId = parseInt(data.split('_')[1]);
-        const lesson = LESSONS.find(l => l.id === lessonId);
-        if (!lesson) return res.status(200).json({ ok: true });
-
-        if (user.lessons.includes(lessonId)) {
-          await answerCallback(query.id, '✅ أكملت هذا الدرس مسبقاً!');
-        } else {
-          await send(id, lesson.content, {
-            reply_markup: { inline_keyboard: [lesson.quiz.options.map((opt, i) => ({ text: opt, callback_data: `answer_${lessonId}_${i}` }))] }
-          });
-          await answerCallback(query.id);
-        }
-      }
-      else if (data.startsWith('answer_')) {
-        const [, lessonIdStr, answerIdxStr] = data.split('_');
-        const lessonId = parseInt(lessonIdStr);
-        const answerIdx = parseInt(answerIdxStr);
-        const lesson = LESSONS.find(l => l.id === lessonId);
-        if (!lesson) return res.status(200).json({ ok: true });
-
-        if (user.lessons.includes(lessonId)) {
-          await answerCallback(query.id, '✅ أجبت مسبقاً!');
-        } else if (answerIdx === lesson.quiz.correct) {
-          user.zen += lesson.reward;
-          user.lessons.push(lessonId);
-          user.level = Math.floor(user.lessons.length / 2) + 1;
-          await saveUser(id, user);
-          const allDone = user.lessons.length === LESSONS.length ? '\n\n🏆 أكملت جميع الدروس! أنت Pioneer حقيقي!' : '';
-          await send(id, `✅ *إجابة صحيحة!*\n\n🎉 +${lesson.reward} ZEN\n💰 رصيدك: *${user.zen} ZEN*\n📊 مستواك: *${user.level}*${allDone}`);
-          await answerCallback(query.id, '✅ صحيح!');
-        } else {
-          await send(id, `❌ إجابة خاطئة! حاول مرة أخرى في الدرس.`);
-          await answerCallback(query.id, '❌ خطأ');
-        }
+      if (data.startsWith('cat_')) {
+        const catId = data.split('_')[1];
+        const cat = CATEGORIES.find(c => c.id === catId);
+        await send(id, `${cat.title}\n\nلعرض المنتجات المتوفرة حالياً والتواصل مع الموردين مباشرة، تفضل بزيارة السوق على الموقع:`, {
+          reply_markup: { inline_keyboard: [[{ text: '🛒 عرض المنتجات', url: `https://zenithempire.online/#market-${catId}` }]] }
+        });
+        await answerCallback(query.id);
       }
     }
 
