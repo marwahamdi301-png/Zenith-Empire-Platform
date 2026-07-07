@@ -61,6 +61,8 @@ export default function Marketplace() {
   const [quantity, setQuantity] = useState('');
   const [shippingCountry, setShippingCountry] = useState('');
   const [contact, setContact] = useState('');
+  const [address, setAddress] = useState('');
+  const [orderMode, setOrderMode] = useState<'quote' | 'sample'>('quote');
   const [orderStatus, setOrderStatus] = useState('');
   const [sortBy, setSortBy] = useState('default');
 
@@ -79,7 +81,11 @@ export default function Marketplace() {
     });
 
   async function handleQuoteRequest(product: any) {
-    if (!quantity || !shippingCountry || !contact) {
+    if (orderMode === 'quote' && (!quantity || !shippingCountry || !contact)) {
+      setOrderStatus('❌ الرجاء ملء كل الحقول');
+      return;
+    }
+    if (orderMode === 'sample' && (!address || !shippingCountry || !contact)) {
       setOrderStatus('❌ الرجاء ملء كل الحقول');
       return;
     }
@@ -94,6 +100,8 @@ export default function Marketplace() {
           quantity,
           shippingCountry,
           contact,
+          requestType: orderMode,
+          address,
         })
       });
       const data = await response.json();
@@ -193,12 +201,20 @@ export default function Marketplace() {
                 <div className="text-cyan-400 font-bold text-sm">${product.priceUSD} / {product.unit}</div>
                 <div className="text-gray-500 text-xs">الحد الأدنى: {product.minOrder}</div>
               </div>
-              <button
-                onClick={() => { setShowOrder(product); setOrderStatus(''); setQuantity(''); setShippingCountry(''); setContact(''); }}
-                className="px-4 py-2 bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold rounded-lg text-xs hover:opacity-90"
-              >
-                📋 اطلب عرض سعر
-              </button>
+              <div className="flex flex-col gap-1.5">
+                <button
+                  onClick={() => { setShowOrder(product); setOrderMode('quote'); setOrderStatus(''); setQuantity(''); setShippingCountry(''); setContact(''); setAddress(''); }}
+                  className="px-4 py-2 bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold rounded-lg text-xs hover:opacity-90"
+                >
+                  📋 اطلب عرض سعر
+                </button>
+                <button
+                  onClick={() => { setShowOrder(product); setOrderMode('sample'); setOrderStatus(''); setQuantity(''); setShippingCountry(''); setContact(''); setAddress(''); }}
+                  className="px-4 py-2 bg-gray-800 border border-orange-500/40 text-orange-400 font-bold rounded-lg text-xs hover:bg-gray-700"
+                >
+                  🎁 اطلب عينة
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -218,7 +234,7 @@ export default function Marketplace() {
         <div className="fixed inset-0 bg-black/80 z-50 overflow-y-auto flex items-center justify-center p-4">
           <div className="bg-gray-900 border-t border-gray-700 rounded-2xl p-5 w-full max-w-md max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-bold">{showOrder.image} اطلب عرض سعر</h3>
+              <h3 className="text-white font-bold">{showOrder.image} {orderMode === 'sample' ? 'اطلب عينة' : 'اطلب عرض سعر'}</h3>
               <button onClick={() => setShowOrder(null)} className="text-gray-500 text-xl">✕</button>
             </div>
 
@@ -230,16 +246,30 @@ export default function Marketplace() {
               <div className="text-green-400 text-xs">🚚 {showOrder.route}</div>
             </div>
 
-            <div className="mb-3">
-              <label className="text-gray-400 text-sm mb-1 block">الكمية المطلوبة</label>
-              <input
-                type="text"
-                placeholder="مثال: 100 وحدة"
-                value={quantity}
-                onChange={e => setQuantity(e.target.value)}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:border-green-500 focus:outline-none"
-              />
-            </div>
+            {orderMode === 'quote' ? (
+              <div className="mb-3">
+                <label className="text-gray-400 text-sm mb-1 block">الكمية المطلوبة</label>
+                <input
+                  type="text"
+                  placeholder="مثال: 100 وحدة"
+                  value={quantity}
+                  onChange={e => setQuantity(e.target.value)}
+                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:border-green-500 focus:outline-none"
+                />
+              </div>
+            ) : (
+              <div className="mb-3">
+                <label className="text-gray-400 text-sm mb-1 block">عنوان الشحن الكامل</label>
+                <input
+                  type="text"
+                  placeholder="الشارع، المدينة، الرمز البريدي"
+                  value={address}
+                  onChange={e => setAddress(e.target.value)}
+                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:border-green-500 focus:outline-none"
+                />
+                <p className="text-orange-400 text-xs mt-1">⚠️ المشتري يدفع تكلفة الشحن فقط</p>
+              </div>
+            )}
 
             <div className="mb-3">
               <label className="text-gray-400 text-sm mb-1 block">بلد الشحن</label>
