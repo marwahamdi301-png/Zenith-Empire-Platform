@@ -5,15 +5,25 @@ const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID;
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { product, seller, quantity, shippingCountry, contact } = req.body;
+  const { product, seller, quantity, shippingCountry, contact, requestType, address } = req.body;
+  const type = requestType === 'sample' ? 'sample' : 'quote';
 
-  if (!product || !quantity || !shippingCountry || !contact) {
+  if (!product || !shippingCountry || !contact) {
     return res.status(400).json({ success: false, error: 'بيانات ناقصة' });
+  }
+  if (type === 'quote' && !quantity) {
+    return res.status(400).json({ success: false, error: 'بيانات ناقصة' });
+  }
+  if (type === 'sample' && !address) {
+    return res.status(400).json({ success: false, error: 'العنوان مطلوب لطلب العينة' });
   }
 
   try {
     if (ADMIN_CHAT_ID && TOKEN) {
-      const message = `🆕 طلب عرض سعر جديد\n\nالمنتج: ${product}\nالمورّد: ${seller}\nالكمية: ${quantity}\nبلد الشحن: ${shippingCountry}\nالتواصل: ${contact}`;
+      const message = type === 'sample'
+        ? `📦 طلب عينة جديد\n\nالمنتج: ${product}\nالمورّد: ${seller}\nعنوان الشحن: ${address}\nبلد الشحن: ${shippingCountry}\nالتواصل: ${contact}\n\n⚠️ المشتري يدفع تكلفة الشحن فقط`
+        : `🆕 طلب عرض سعر جديد\n\nالمنتج: ${product}\nالمورّد: ${seller}\nالكمية: ${quantity}\nبلد الشحن: ${shippingCountry}\nالتواصل: ${contact}`;
+
       const tgResponse = await fetch(`${TG_API}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -21,8 +31,6 @@ export default async function handler(req, res) {
       });
       const tgData = await tgResponse.json();
       console.log('TELEGRAM_RESPONSE:', JSON.stringify(tgData));
-      console.log('TOKEN_LENGTH:', TOKEN ? TOKEN.length : 0);
-      console.log('CHAT_ID:', ADMIN_CHAT_ID);
     } else {
       console.log('MISSING_ENV_VARS:', { hasToken: !!TOKEN, hasChatId: !!ADMIN_CHAT_ID });
     }
