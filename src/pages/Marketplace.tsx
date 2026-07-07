@@ -63,6 +63,9 @@ export default function Marketplace() {
   const [contact, setContact] = useState('');
   const [address, setAddress] = useState('');
   const [orderMode, setOrderMode] = useState<'quote' | 'sample'>('quote');
+  const [interestProduct, setInterestProduct] = useState<any>(null);
+  const [interestContact, setInterestContact] = useState('');
+  const [interestStatus, setInterestStatus] = useState('');
   const [orderStatus, setOrderStatus] = useState('');
   const [sortBy, setSortBy] = useState('default');
 
@@ -115,6 +118,33 @@ export default function Marketplace() {
     }
   }
 
+  async function handleInterest() {
+    if (!interestContact) {
+      setInterestStatus('❌ الرجاء إدخال وسيلة تواصل');
+      return;
+    }
+    setInterestStatus('⏳ جاري الإرسال...');
+    try {
+      const response = await fetch('/api/request-quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product: interestProduct.name,
+          contact: interestContact,
+          requestType: 'interest',
+        })
+      });
+      const data = await response.json();
+      if (data.success) {
+        setInterestStatus('✅ تم التسجيل! سنعلمك فور توفر مورّد حقيقي لهذا المنتج.');
+      } else {
+        setInterestStatus(`❌ خطأ: ${data.error}`);
+      }
+    } catch (err) {
+      setInterestStatus('❌ فشل الإرسال. حاول مرة أخرى.');
+    }
+  }
+
   return (
     <div className="space-y-4 pb-20">
       <div className="bg-gradient-to-r from-green-900 via-teal-900 to-blue-900 p-4">
@@ -139,6 +169,11 @@ export default function Marketplace() {
             <div className="text-gray-400 text-xs">اطلب عرض سعر</div>
           </div>
         </div>
+      </div>
+
+      <div className="mx-4 bg-orange-900/30 border border-orange-500/40 rounded-xl p-3">
+        <p className="text-orange-300 text-xs font-bold">🚧 المنصة في مرحلة تجميع الموردين</p>
+        <p className="text-orange-200/80 text-xs mt-1">المنتجات أدناه أمثلة توضيحية لأنواع المنتجات المستهدفة. سجل كمورّد لتكون أول عرض حقيقي على المنصة.</p>
       </div>
 
       <div className="px-4 flex gap-2">
@@ -185,7 +220,7 @@ export default function Marketplace() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="text-white font-bold text-sm leading-tight">{product.name}</h3>
-                  <span className="text-yellow-400 text-xs flex-shrink-0">★{product.rating}</span>
+                  <span className="text-orange-400 text-[10px] flex-shrink-0 bg-orange-900/40 px-1.5 py-0.5 rounded">🔸 مثال توضيحي</span>
                 </div>
                 <p className="text-gray-500 text-xs">{product.nameAr}</p>
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -201,20 +236,12 @@ export default function Marketplace() {
                 <div className="text-cyan-400 font-bold text-sm">${product.priceUSD} / {product.unit}</div>
                 <div className="text-gray-500 text-xs">الحد الأدنى: {product.minOrder}</div>
               </div>
-              <div className="flex flex-col gap-1.5">
-                <button
-                  onClick={() => { setShowOrder(product); setOrderMode('quote'); setOrderStatus(''); setQuantity(''); setShippingCountry(''); setContact(''); setAddress(''); }}
-                  className="px-4 py-2 bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold rounded-lg text-xs hover:opacity-90"
-                >
-                  📋 اطلب عرض سعر
-                </button>
-                <button
-                  onClick={() => { setShowOrder(product); setOrderMode('sample'); setOrderStatus(''); setQuantity(''); setShippingCountry(''); setContact(''); setAddress(''); }}
-                  className="px-4 py-2 bg-gray-800 border border-orange-500/40 text-orange-400 font-bold rounded-lg text-xs hover:bg-gray-700"
-                >
-                  🎁 اطلب عينة
-                </button>
-              </div>
+              <button
+                onClick={() => { setInterestProduct(product); setInterestContact(''); setInterestStatus(''); }}
+                className="px-4 py-2 bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold rounded-lg text-xs hover:opacity-90"
+              >
+                🔔 أعلمني لما يتوفر
+              </button>
             </div>
           </div>
         ))}
@@ -302,6 +329,40 @@ export default function Marketplace() {
               className="w-full py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold rounded-lg"
             >
               📩 إرسال الطلب
+            </button>
+          </div>
+        </div>
+      )}
+
+      {interestProduct && (
+        <div className="fixed inset-0 bg-black/80 z-50 overflow-y-auto flex items-center justify-center p-4">
+          <div className="bg-gray-900 border border-gray-700 rounded-2xl p-5 w-full max-w-md">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-white font-bold">🔔 أعلمني لما يتوفر</h3>
+              <button onClick={() => setInterestProduct(null)} className="text-gray-500 text-xl">✕</button>
+            </div>
+            <div className="bg-gray-800 rounded-lg p-3 mb-4">
+              <div className="text-white font-bold text-sm">{interestProduct.name}</div>
+              <p className="text-orange-300 text-xs mt-1">🔸 منتج توضيحي — لا يوجد مورّد حقيقي بعد. سجل تواصلك وسنعلمك فور توفره.</p>
+            </div>
+            <div className="mb-4">
+              <label className="text-gray-400 text-sm mb-1 block">وسيلة التواصل (واتساب/إيميل)</label>
+              <input
+                type="text"
+                placeholder="+49... أو email@example.com"
+                value={interestContact}
+                onChange={e => setInterestContact(e.target.value)}
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:border-orange-500 focus:outline-none"
+              />
+            </div>
+            {interestStatus && (
+              <div className="bg-gray-800 rounded-lg p-3 mb-4 text-sm text-gray-300">{interestStatus}</div>
+            )}
+            <button
+              onClick={handleInterest}
+              className="w-full py-3 bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold rounded-lg"
+            >
+              📩 سجّل اهتمامي
             </button>
           </div>
         </div>

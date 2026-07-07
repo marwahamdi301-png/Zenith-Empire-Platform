@@ -6,22 +6,30 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { product, seller, quantity, shippingCountry, contact, requestType, address } = req.body;
-  const type = requestType === 'sample' ? 'sample' : 'quote';
+  const type = requestType === 'sample' ? 'sample' : requestType === 'interest' ? 'interest' : 'quote';
 
-  if (!product || !shippingCountry || !contact) {
-    return res.status(400).json({ success: false, error: 'بيانات ناقصة' });
-  }
-  if (type === 'quote' && !quantity) {
-    return res.status(400).json({ success: false, error: 'بيانات ناقصة' });
-  }
-  if (type === 'sample' && !address) {
-    return res.status(400).json({ success: false, error: 'العنوان مطلوب لطلب العينة' });
+  if (type === 'interest') {
+    if (!product || !contact) {
+      return res.status(400).json({ success: false, error: 'بيانات ناقصة' });
+    }
+  } else {
+    if (!product || !shippingCountry || !contact) {
+      return res.status(400).json({ success: false, error: 'بيانات ناقصة' });
+    }
+    if (type === 'quote' && !quantity) {
+      return res.status(400).json({ success: false, error: 'بيانات ناقصة' });
+    }
+    if (type === 'sample' && !address) {
+      return res.status(400).json({ success: false, error: 'العنوان مطلوب لطلب العينة' });
+    }
   }
 
   try {
     if (ADMIN_CHAT_ID && TOKEN) {
       const message = type === 'sample'
         ? `📦 طلب عينة جديد\n\nالمنتج: ${product}\nالمورّد: ${seller}\nعنوان الشحن: ${address}\nبلد الشحن: ${shippingCountry}\nالتواصل: ${contact}\n\n⚠️ المشتري يدفع تكلفة الشحن فقط`
+        : type === 'interest'
+        ? `🔔 اهتمام مشترٍ بمنتج تجريبي\n\nالمنتج: ${product}\nالتواصل: ${contact}\n\n⚠️ هذا المنتج تجريبي، لا يوجد مورّد حقيقي بعد — تواصل مع المشتري لإعلامه عند توفر مورّد.`
         : `🆕 طلب عرض سعر جديد\n\nالمنتج: ${product}\nالمورّد: ${seller}\nالكمية: ${quantity}\nبلد الشحن: ${shippingCountry}\nالتواصل: ${contact}`;
 
       const tgResponse = await fetch(`${TG_API}/sendMessage`, {
