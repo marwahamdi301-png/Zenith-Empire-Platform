@@ -16,11 +16,11 @@ const categories = [
   { id: 'crafts', label: 'Crafts', emoji: '🎨' },
   { id: 'marble', label: 'Marble', emoji: '🪨' },
   { id: 'electronics', label: 'Electronics', emoji: '📱' },
-  { id: 'agriculture', label: 'Agriculture', emoji: '🚜' },
+  { id: 'agriculture', label: 'Agriculture', emoji: '🚜' },  { id: 33, name: 'Dried Raisins', nameAr: 'زبيب (عنب مجفف)', seller: 'Baya Farms', country: '🇹🇳 Tunisia', priceUSD: 5.5, unit: '1kg', minOrder: '20 units', stock: 100, rating: 5.0, image: '🍇', category: 'dates', route: 'Tunisia → EU/GCC', isDemo: false },
 ];
 
 const products = [
-  { id: 1, name: 'Extra Virgin Olive Oil', nameAr: 'زيت زيتون بكر ممتاز', seller: 'Hamdi Farm', country: '🇹🇳 Tunisia', priceUSD: 32, unit: '5L bottle', minOrder: '20 units', stock: 500, rating: 4.9, image: '🫒', category: 'oils', route: 'Tunisia → EU/GCC' },
+  { id: 1, name: 'Extra Virgin Olive Oil', nameAr: 'زيت زيتون بكر ممتاز - سليانة', seller: 'Baya Farms', country: '🇹🇳 Tunisia', priceUSD: 32, unit: '5L bottle', minOrder: '10 units', stock: 60, rating: 5.0, image: '🫒', category: 'oils', route: 'Tunisia → EU/GCC', isDemo: false },
   { id: 2, name: 'Prickly Pear Seed Oil', nameAr: 'زيت بذور التين الشوكي', seller: 'Baya Natural', country: '🇲🇦 Morocco', priceUSD: 38, unit: '30ml', minOrder: '50 units', stock: 100, rating: 5.0, image: '🌵', category: 'oils', route: 'Morocco → France/Italy' },
   { id: 3, name: 'Argan Oil Premium', nameAr: 'زيت أركان فاخر', seller: 'Atlas Gold', country: '🇲🇦 Morocco', priceUSD: 34, unit: '100ml', minOrder: '50 units', stock: 200, rating: 4.9, image: '🌰', category: 'oils', route: 'Morocco → EU' },
   { id: 4, name: 'Black Seed Oil', nameAr: 'زيت الحبة السوداء', seller: 'Sahara Herbs', country: '🇩🇿 Algeria', priceUSD: 15, unit: '250ml', minOrder: '30 units', stock: 300, rating: 4.8, image: '🖤', category: 'oils', route: 'Algeria → Balkans/EU' },
@@ -28,7 +28,7 @@ const products = [
   { id: 6, name: 'Ras el Hanout', nameAr: 'رأس الحانوت', seller: 'Marrakech Spices', country: '🇲🇦 Morocco', priceUSD: 3.8, unit: '100g', minOrder: '100 units', stock: 500, rating: 4.9, image: '🫙', category: 'spices', route: 'Morocco → Balkans' },
   { id: 7, name: 'Saffron Premium', nameAr: 'زعفران فاخر', seller: 'Atlas Saffron', country: '🇲🇦 Morocco', priceUSD: 14, unit: '1g', minOrder: '10 units', stock: 50, rating: 5.0, image: '🌸', category: 'spices', route: 'Morocco → EU/GCC' },
   { id: 8, name: 'Smoked Paprika', nameAr: 'فلفل مدخن', seller: 'Annaba Farms', country: '🇩🇿 Algeria', priceUSD: 2.3, unit: '150g', minOrder: '100 units', stock: 800, rating: 4.7, image: '🫑', category: 'spices', route: 'Algeria → Balkans' },
-  { id: 9, name: 'Deglet Nour Dates', nameAr: 'تمر دقلة نور', seller: 'Sahara Gold', country: '🇹🇳 Tunisia', priceUSD: 4.75, unit: '1kg box', minOrder: '50 units', stock: 2000, rating: 4.9, image: '🌴', category: 'dates', route: 'Tunisia → EU/Africa' },
+  { id: 9, name: 'Deglet Nour Dates', nameAr: 'تمر دقلة نور', seller: 'Baya Farms', country: '🇹🇳 Tunisia', priceUSD: 4.75, unit: '1kg box', minOrder: '20 units', stock: 200, rating: 5.0, image: '🌴', category: 'dates', route: 'Tunisia → EU/Africa', isDemo: false },
   { id: 10, name: 'Medjool Dates Premium', nameAr: 'تمر مجهول فاخر', seller: 'Draa Valley', country: '🇲🇦 Morocco', priceUSD: 8.5, unit: '1kg', minOrder: '30 units', stock: 500, rating: 5.0, image: '🍯', category: 'dates', route: 'Morocco → EU/GCC' },
   { id: 11, name: 'Algerian Degla Baida', nameAr: 'دقلة البيضاء الجزائرية', seller: 'Biskra Dates', country: '🇩🇿 Algeria', priceUSD: 3.8, unit: '1kg', minOrder: '50 units', stock: 1000, rating: 4.8, image: '🤍', category: 'dates', route: 'Algeria → Balkans/EU' },
   { id: 12, name: 'Handwoven Berber Carpet', nameAr: 'سجادة أمازيغية يدوية', seller: 'Atlas Crafts', country: '🇲🇦 Morocco', priceUSD: 380, unit: '2x3m', minOrder: '5 units', stock: 20, rating: 5.0, image: '🧵', category: 'textiles', route: 'Morocco → EU' },
@@ -220,7 +220,11 @@ export default function Marketplace() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="text-white font-bold text-sm leading-tight">{product.name}</h3>
-                  <span className="text-orange-400 text-[10px] flex-shrink-0 bg-orange-900/40 px-1.5 py-0.5 rounded">🔸 مثال توضيحي</span>
+                  {product.isDemo === false ? (
+                    <span className="text-green-400 text-[10px] flex-shrink-0 bg-green-900/40 px-1.5 py-0.5 rounded">✅ مورّد حقيقي</span>
+                  ) : (
+                    <span className="text-orange-400 text-[10px] flex-shrink-0 bg-orange-900/40 px-1.5 py-0.5 rounded">🔸 مثال توضيحي</span>
+                  )}
                 </div>
                 <p className="text-gray-500 text-xs">{product.nameAr}</p>
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -236,12 +240,29 @@ export default function Marketplace() {
                 <div className="text-cyan-400 font-bold text-sm">${product.priceUSD} / {product.unit}</div>
                 <div className="text-gray-500 text-xs">الحد الأدنى: {product.minOrder}</div>
               </div>
-              <button
-                onClick={() => { setInterestProduct(product); setInterestContact(''); setInterestStatus(''); }}
-                className="px-4 py-2 bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold rounded-lg text-xs hover:opacity-90"
-              >
-                🔔 أعلمني لما يتوفر
-              </button>
+              {product.isDemo === false ? (
+                <div className="flex flex-col gap-1.5">
+                  <button
+                    onClick={() => { setShowOrder(product); setOrderMode('quote'); setOrderStatus(''); setQuantity(''); setShippingCountry(''); setContact(''); setAddress(''); }}
+                    className="px-4 py-2 bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold rounded-lg text-xs hover:opacity-90"
+                  >
+                    📋 اطلب عرض سعر
+                  </button>
+                  <button
+                    onClick={() => { setShowOrder(product); setOrderMode('sample'); setOrderStatus(''); setQuantity(''); setShippingCountry(''); setContact(''); setAddress(''); }}
+                    className="px-4 py-2 bg-gray-800 border border-orange-500/40 text-orange-400 font-bold rounded-lg text-xs hover:bg-gray-700"
+                  >
+                    🎁 اطلب عينة
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => { setInterestProduct(product); setInterestContact(''); setInterestStatus(''); }}
+                  className="px-4 py-2 bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold rounded-lg text-xs hover:opacity-90"
+                >
+                  🔔 أعلمني لما يتوفر
+                </button>
+              )}
             </div>
           </div>
         ))}
