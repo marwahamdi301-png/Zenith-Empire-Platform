@@ -20,13 +20,13 @@ const categories = [
 ];
 
 const products = [
-  { id: 1, name: 'Extra Virgin Olive Oil', nameAr: 'زيت زيتون بكر ممتاز', seller: 'Hamdi Farm', country: '🇹🇳 Tunisia', priceUSD: 9.5, unit: '5L bottle', minOrder: '20 units', stock: 500, rating: 4.9, image: '🫒', category: 'oils', route: 'Tunisia → EU/GCC' },
+  { id: 1, name: 'Extra Virgin Olive Oil', nameAr: 'زيت زيتون بكر ممتاز', seller: 'Hamdi Farm', country: '🇹🇳 Tunisia', priceUSD: 32, unit: '5L bottle', minOrder: '20 units', stock: 500, rating: 4.9, image: '🫒', category: 'oils', route: 'Tunisia → EU/GCC' },
   { id: 2, name: 'Prickly Pear Seed Oil', nameAr: 'زيت بذور التين الشوكي', seller: 'Baya Natural', country: '🇲🇦 Morocco', priceUSD: 38, unit: '30ml', minOrder: '50 units', stock: 100, rating: 5.0, image: '🌵', category: 'oils', route: 'Morocco → France/Italy' },
   { id: 3, name: 'Argan Oil Premium', nameAr: 'زيت أركان فاخر', seller: 'Atlas Gold', country: '🇲🇦 Morocco', priceUSD: 34, unit: '100ml', minOrder: '50 units', stock: 200, rating: 4.9, image: '🌰', category: 'oils', route: 'Morocco → EU' },
   { id: 4, name: 'Black Seed Oil', nameAr: 'زيت الحبة السوداء', seller: 'Sahara Herbs', country: '🇩🇿 Algeria', priceUSD: 15, unit: '250ml', minOrder: '30 units', stock: 300, rating: 4.8, image: '🖤', category: 'oils', route: 'Algeria → Balkans/EU' },
   { id: 5, name: 'Organic Harissa', nameAr: 'هريسة عضوية', seller: 'Carthage Foods', country: '🇹🇳 Tunisia', priceUSD: 2.85, unit: '200g jar', minOrder: '100 units', stock: 1000, rating: 4.8, image: '🌶️', category: 'spices', route: 'Tunisia → EU' },
   { id: 6, name: 'Ras el Hanout', nameAr: 'رأس الحانوت', seller: 'Marrakech Spices', country: '🇲🇦 Morocco', priceUSD: 3.8, unit: '100g', minOrder: '100 units', stock: 500, rating: 4.9, image: '🫙', category: 'spices', route: 'Morocco → Balkans' },
-  { id: 7, name: 'Saffron Premium', nameAr: 'زعفران فاخر', seller: 'Atlas Saffron', country: '🇲🇦 Morocco', priceUSD: 95, unit: '1g', minOrder: '10 units', stock: 50, rating: 5.0, image: '🌸', category: 'spices', route: 'Morocco → EU/GCC' },
+  { id: 7, name: 'Saffron Premium', nameAr: 'زعفران فاخر', seller: 'Atlas Saffron', country: '🇲🇦 Morocco', priceUSD: 14, unit: '1g', minOrder: '10 units', stock: 50, rating: 5.0, image: '🌸', category: 'spices', route: 'Morocco → EU/GCC' },
   { id: 8, name: 'Smoked Paprika', nameAr: 'فلفل مدخن', seller: 'Annaba Farms', country: '🇩🇿 Algeria', priceUSD: 2.3, unit: '150g', minOrder: '100 units', stock: 800, rating: 4.7, image: '🫑', category: 'spices', route: 'Algeria → Balkans' },
   { id: 9, name: 'Deglet Nour Dates', nameAr: 'تمر دقلة نور', seller: 'Sahara Gold', country: '🇹🇳 Tunisia', priceUSD: 4.75, unit: '1kg box', minOrder: '50 units', stock: 2000, rating: 4.9, image: '🌴', category: 'dates', route: 'Tunisia → EU/Africa' },
   { id: 10, name: 'Medjool Dates Premium', nameAr: 'تمر مجهول فاخر', seller: 'Draa Valley', country: '🇲🇦 Morocco', priceUSD: 8.5, unit: '1kg', minOrder: '30 units', stock: 500, rating: 5.0, image: '🍯', category: 'dates', route: 'Morocco → EU/GCC' },
