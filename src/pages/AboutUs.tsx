@@ -38,9 +38,19 @@ export default function AboutUs() {
           <ul className="text-gray-400 text-xs space-y-2 leading-relaxed">
             <li>✅ لا وسطاء خفيين — السعر والهامش واضحان دائماً</li>
             <li>✅ تحقق شخصي من كل مورّد جديد قبل عرض منتجاته</li>
-            <li>✅ حجز الدفعة (Escrow) لحين تأكيد المشتري استلام الشحنة بالجودة المتفقة</li>
+            <li>✅ نربطك مباشرة بالطرف الآخر — الدفع والشحن يتفق عليهما الطرفان مباشرة، بلا وسطاء خفيين في العملية</li>
             <li>✅ دعم مباشر بالعربية والفرنسية والإنجليزية</li>
           </ul>
+        </div>
+
+        <div className="bg-gray-900 border border-green-800/50 rounded-2xl p-4">
+          <h3 className="text-sm font-bold text-green-400 mb-2">🌾 Baya Farms — أول مورّد على المنصة</h3>
+          <p className="text-gray-400 text-xs leading-relaxed">
+            نبدأ بأنفسنا: Baya Farms يوفر زيت زيتون من سليانة، تمور، زبيب،
+            زيت إكليل الجبل، منتجات الخروب، وعصائر طبيعية — إضافة لقدرة
+            توفير مجموعة واسعة من المنتجات الزراعية والحرفية من تونس وليبيا
+            حسب الطلب.
+          </p>
         </div>
 
         <div className="text-center pt-4">
