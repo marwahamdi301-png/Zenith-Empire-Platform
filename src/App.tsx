@@ -1,22 +1,8 @@
-import { useState } from 'react';
 import { Zap, Settings } from 'lucide-react';
 import { TabNavigation } from './components/common/TabNavigation';
-import { PriceTicker } from './components/common/PriceTicker';
 import { NotificationCenter } from './components/common/NotificationCenter';
-import { DashboardView } from './components/dashboard/DashboardView';
 
 function App() {
-  const [activeTab] = useState('dashboard');
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'dashboard':
-        return <DashboardView />;
-      default:
-        return <DashboardView />;
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <header className="border-b border-gray-800 bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50">
@@ -45,18 +31,13 @@ function App() {
         </div>
       </header>
 
-      <PriceTicker />
       <TabNavigation />
-
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {renderTabContent()}
-      </main>
 
       <footer className="border-t border-gray-800 bg-gray-900/50 mt-12">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-gray-400">
-              © 2026 Zenith Trade Hub · تونس · المغرب · الجزائر 🌍
+              © 2026 Zenith Trade Hub · تونس · المغرب · الجزائر  🌍
             </p>
             <div className="flex items-center gap-6">
               <a href="https://github.com/marwahamdi301-png/Zenith-Empire-Platform" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-primary transition-colors">GitHub</a>

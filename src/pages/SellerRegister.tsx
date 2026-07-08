@@ -19,6 +19,8 @@ const productCategories = [
 export default function SellerRegister() {
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [form, setForm] = useState({
     businessName: '',
     ownerName: '',
@@ -28,7 +30,6 @@ export default function SellerRegister() {
     city: '',
     categories: [] as string[],
     description: '',
-    walletAddress: '',
     monthlyVolume: '',
     website: '',
   });
@@ -46,8 +47,26 @@ export default function SellerRegister() {
     }));
   }
 
-  function handleSubmit() {
-    setSubmitted(true);
+  async function handleSubmit() {
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      const response = await fetch('/api/seller-register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      });
+      const data = await response.json();
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        setSubmitError(data.error || 'حدث خطأ، حاول مرة أخرى');
+      }
+    } catch (err) {
+      setSubmitError('فشل الإرسال. تحقق من الاتصال وحاول مرة أخرى.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (submitted) {
@@ -55,22 +74,22 @@ export default function SellerRegister() {
       <div className="min-h-screen bg-gray-950 flex items-center justify-center p-6">
         <div className="text-center">
           <div className="text-6xl mb-4">🎉</div>
-          <h2 className="text-white font-bold text-2xl mb-2">Application Submitted!</h2>
+          <h2 className="text-white font-bold text-2xl mb-2">تم إرسال طلبك!</h2>
           <p className="text-gray-400 mb-4">
-            Thank you <span className="text-cyan-400">{form.businessName}</span>!
-            We will review your application and contact you within 48 hours.
+            شكراً <span className="text-cyan-400">{form.businessName}</span>!
+            سنراجع طلبك ونتواصل معك خلال 48 ساعة.
           </p>
           <div className="bg-gray-900 border border-green-500/30 rounded-xl p-4 text-left mb-6">
-            <div className="text-green-400 font-bold mb-2">✅ What happens next:</div>
+            <div className="text-green-400 font-bold mb-2">✅ الخطوات القادمة:</div>
             <div className="space-y-2 text-gray-400 text-sm">
-              <div>1. Our team reviews your application</div>
-              <div>2. We verify your products</div>
-              <div>3. Your store goes live on ZENITH Marketplace</div>
-              <div>4. Start receiving ZENITH payments instantly!</div>
+              <div>1. فريقنا يراجع طلبك</div>
+              <div>2. نتحقق من منتجاتك</div>
+              <div>3. يظهر متجرك على منصة Zenith</div>
+              <div>4. نتفق معك على طريقة الدفع (تحويل بنكي / USD)</div>
             </div>
           </div>
           <div className="text-gray-500 text-sm">
-            📧 Check {form.email} for confirmation
+            📧 راقب {form.email} لتأكيد الطلب
           </div>
         </div>
       </div>
@@ -79,32 +98,30 @@ export default function SellerRegister() {
 
   return (
     <div className="min-h-screen bg-gray-950 pb-20">
-      {/* Header */}
       <div className="bg-gradient-to-r from-green-900 to-teal-900 p-5">
-        <h2 className="text-white font-bold text-xl mb-1">🌾 Become a Seller</h2>
+        <h2 className="text-white font-bold text-xl mb-1">🌾 سجل كمورّد</h2>
         <p className="text-green-300 text-sm">
-          Sell your products across Maghreb · Africa · Balkans · Europe
+          بيع منتجاتك عبر المغرب العربي، أوروبا، والخليج
         </p>
         <div className="flex gap-2 mt-3">
           {[1,2,3].map(s => (
             <div key={s} className={`flex-1 h-1.5 rounded-full ${step >= s ? 'bg-green-400' : 'bg-gray-700'}`} />
           ))}
         </div>
-        <div className="text-gray-400 text-xs mt-2">Step {step} of 3</div>
+        <div className="text-gray-400 text-xs mt-2">خطوة {step} من 3</div>
       </div>
 
       <div className="p-4 space-y-4">
 
-        {/* Step 1 — Business Info */}
         {step === 1 && (
           <div className="space-y-4">
-            <h3 className="text-white font-bold text-lg">📋 Business Information</h3>
+            <h3 className="text-white font-bold text-lg">📋 معلومات النشاط التجاري</h3>
 
             <div>
-              <label className="text-gray-400 text-sm mb-1 block">Business Name *</label>
+              <label className="text-gray-400 text-sm mb-1 block">اسم النشاط التجاري *</label>
               <input
                 type="text"
-                placeholder="e.g. Hamdi Farm, Atlas Crafts..."
+                placeholder="مثال: Hamdi Farm, Atlas Crafts..."
                 value={form.businessName}
                 onChange={e => updateForm('businessName', e.target.value)}
                 className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-3 text-white text-sm focus:border-green-500 focus:outline-none"
@@ -112,10 +129,10 @@ export default function SellerRegister() {
             </div>
 
             <div>
-              <label className="text-gray-400 text-sm mb-1 block">Owner Name *</label>
+              <label className="text-gray-400 text-sm mb-1 block">اسم المالك *</label>
               <input
                 type="text"
-                placeholder="Your full name"
+                placeholder="اسمك الكامل"
                 value={form.ownerName}
                 onChange={e => updateForm('ownerName', e.target.value)}
                 className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-3 text-white text-sm focus:border-green-500 focus:outline-none"
@@ -123,7 +140,7 @@ export default function SellerRegister() {
             </div>
 
             <div>
-              <label className="text-gray-400 text-sm mb-1 block">Email *</label>
+              <label className="text-gray-400 text-sm mb-1 block">الإيميل *</label>
               <input
                 type="email"
                 placeholder="business@email.com"
@@ -134,7 +151,7 @@ export default function SellerRegister() {
             </div>
 
             <div>
-              <label className="text-gray-400 text-sm mb-1 block">WhatsApp Number</label>
+              <label className="text-gray-400 text-sm mb-1 block">رقم واتساب</label>
               <input
                 type="tel"
                 placeholder="+216 XX XXX XXX"
@@ -145,22 +162,22 @@ export default function SellerRegister() {
             </div>
 
             <div>
-              <label className="text-gray-400 text-sm mb-1 block">Country *</label>
+              <label className="text-gray-400 text-sm mb-1 block">الدولة *</label>
               <select
                 value={form.country}
                 onChange={e => updateForm('country', e.target.value)}
                 className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-3 text-white text-sm focus:border-green-500 focus:outline-none"
               >
-                <option value="">Select country...</option>
+                <option value="">اختر الدولة...</option>
                 {countries.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
 
             <div>
-              <label className="text-gray-400 text-sm mb-1 block">City</label>
+              <label className="text-gray-400 text-sm mb-1 block">المدينة</label>
               <input
                 type="text"
-                placeholder="e.g. Sfax, Marrakech, Algiers..."
+                placeholder="مثال: صفاقس، مراكش، الجزائر العاصمة..."
                 value={form.city}
                 onChange={e => updateForm('city', e.target.value)}
                 className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-3 text-white text-sm focus:border-green-500 focus:outline-none"
@@ -172,19 +189,18 @@ export default function SellerRegister() {
               disabled={!form.businessName || !form.email || !form.country}
               className="w-full py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold rounded-lg disabled:opacity-50"
             >
-              Next →
+              التالي →
             </button>
           </div>
         )}
 
-        {/* Step 2 — Products */}
         {step === 2 && (
           <div className="space-y-4">
-            <h3 className="text-white font-bold text-lg">🛒 Your Products</h3>
+            <h3 className="text-white font-bold text-lg">🛒 منتجاتك</h3>
 
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                Product Categories * (select all that apply)
+                فئات المنتجات * (اختر كل ما ينطبق)
               </label>
               <div className="grid grid-cols-2 gap-2">
                 {productCategories.map(cat => (
@@ -204,9 +220,9 @@ export default function SellerRegister() {
             </div>
 
             <div>
-              <label className="text-gray-400 text-sm mb-1 block">Business Description</label>
+              <label className="text-gray-400 text-sm mb-1 block">وصف النشاط التجاري</label>
               <textarea
-                placeholder="Tell us about your business, products, and experience..."
+                placeholder="حدثنا عن نشاطك، منتجاتك، وخبرتك..."
                 value={form.description}
                 onChange={e => updateForm('description', e.target.value)}
                 rows={4}
@@ -215,23 +231,23 @@ export default function SellerRegister() {
             </div>
 
             <div>
-              <label className="text-gray-400 text-sm mb-1 block">Monthly Export Volume</label>
+              <label className="text-gray-400 text-sm mb-1 block">حجم التصدير الشهري</label>
               <select
                 value={form.monthlyVolume}
                 onChange={e => updateForm('monthlyVolume', e.target.value)}
                 className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-3 text-white text-sm focus:border-green-500 focus:outline-none"
               >
-                <option value="">Select volume...</option>
-                <option>Under $1,000/month</option>
-                <option>$1,000 - $5,000/month</option>
-                <option>$5,000 - $20,000/month</option>
-                <option>$20,000 - $100,000/month</option>
-                <option>Over $100,000/month</option>
+                <option value="">اختر الحجم...</option>
+                <option>أقل من $1,000/شهر</option>
+                <option>$1,000 - $5,000/شهر</option>
+                <option>$5,000 - $20,000/شهر</option>
+                <option>$20,000 - $100,000/شهر</option>
+                <option>أكثر من $100,000/شهر</option>
               </select>
             </div>
 
             <div>
-              <label className="text-gray-400 text-sm mb-1 block">Website (optional)</label>
+              <label className="text-gray-400 text-sm mb-1 block">الموقع الإلكتروني (اختياري)</label>
               <input
                 type="url"
                 placeholder="https://your-business.com"
@@ -244,80 +260,65 @@ export default function SellerRegister() {
             <div className="flex gap-3">
               <button onClick={() => setStep(1)}
                 className="flex-1 py-3 bg-gray-800 text-white font-bold rounded-lg">
-                ← Back
+                ← رجوع
               </button>
               <button
                 onClick={() => setStep(3)}
                 disabled={form.categories.length === 0}
                 className="flex-1 py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold rounded-lg disabled:opacity-50"
               >
-                Next →
+                التالي →
               </button>
             </div>
           </div>
         )}
 
-        {/* Step 3 — Wallet & Submit */}
         {step === 3 && (
           <div className="space-y-4">
-            <h3 className="text-white font-bold text-lg">⚡ Payment Setup</h3>
+            <h3 className="text-white font-bold text-lg">📋 مراجعة الطلب</h3>
 
-            <div className="bg-yellow-900/30 border border-yellow-500/30 rounded-xl p-4">
-              <div className="text-yellow-400 font-bold mb-2">💡 Why Stellar Wallet?</div>
-              <div className="text-gray-400 text-sm">
-                You will receive payments in ZENITH tokens directly to your Stellar wallet.
-                No banks, no delays, instant settlement!
-              </div>
-            </div>
-
-            <div>
-              <label className="text-gray-400 text-sm mb-1 block">
-                Stellar Wallet Address *
-              </label>
-              <input
-                type="text"
-                placeholder="G... (56 characters)"
-                value={form.walletAddress}
-                onChange={e => updateForm('walletAddress', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-3 text-white text-sm font-mono focus:border-green-500 focus:outline-none"
-              />
-              <p className="text-gray-600 text-xs mt-1">
-                Don't have one? Download Lobstr app and create free wallet
-              </p>
-            </div>
-
-            {/* Summary */}
             <div className="bg-gray-800 rounded-xl p-4 space-y-2">
-              <div className="text-white font-bold mb-3">📋 Application Summary</div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Business:</span>
+                <span className="text-gray-400">النشاط:</span>
                 <span className="text-white">{form.businessName}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Country:</span>
+                <span className="text-gray-400">الدولة:</span>
                 <span className="text-white">{form.country}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Categories:</span>
-                <span className="text-white">{form.categories.length} selected</span>
+                <span className="text-gray-400">الفئات:</span>
+                <span className="text-white">{form.categories.length} مختارة</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Volume:</span>
-                <span className="text-white">{form.monthlyVolume || 'Not specified'}</span>
+                <span className="text-gray-400">الحجم:</span>
+                <span className="text-white">{form.monthlyVolume || 'غير محدد'}</span>
               </div>
             </div>
+
+            <div className="bg-blue-900/30 border border-blue-500/30 rounded-xl p-4">
+              <div className="text-blue-300 text-sm">
+                💳 الدفع يتم بالدولار الأمريكي عبر تحويل بنكي أو Wise. سنتواصل معك لترتيب التفاصيل بعد المراجعة.
+              </div>
+            </div>
+
+            {submitError && (
+              <div className="bg-red-900/30 border border-red-500/30 rounded-lg p-3 text-red-300 text-sm">
+                ❌ {submitError}
+              </div>
+            )}
 
             <div className="flex gap-3">
               <button onClick={() => setStep(2)}
                 className="flex-1 py-3 bg-gray-800 text-white font-bold rounded-lg">
-                ← Back
+                ← رجوع
               </button>
               <button
                 onClick={handleSubmit}
-                disabled={!form.walletAddress}
+                disabled={submitting}
                 className="flex-1 py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold rounded-lg disabled:opacity-50"
               >
-                🚀 Submit
+                {submitting ? '⏳ جاري الإرسال...' : '🚀 إرسال الطلب'}
               </button>
             </div>
           </div>
