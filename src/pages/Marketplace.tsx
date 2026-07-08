@@ -16,7 +16,10 @@ const categories = [
   { id: 'crafts', label: 'Crafts', emoji: '🎨' },
   { id: 'marble', label: 'Marble', emoji: '🪨' },
   { id: 'electronics', label: 'Electronics', emoji: '📱' },
-  { id: 'agriculture', label: 'Agriculture', emoji: '🚜' },  { id: 33, name: 'Dried Raisins', nameAr: 'زبيب (عنب مجفف)', seller: 'Baya Farms', country: '🇹🇳 Tunisia', priceUSD: 5.5, unit: '1kg', minOrder: '20 units', stock: 100, rating: 5.0, image: '🍇', category: 'dates', route: 'Tunisia → EU/GCC', isDemo: false },
+  { id: 'agriculture', label: 'Agriculture', emoji: '🚜' },  { id: 33, name: 'Dried Raisins', nameAr: 'زبيب (عنب مجفف)', seller: 'Baya Farms', country: '🇹🇳 Tunisia', priceUSD: 5.5, unit: '1kg', minOrder: '20 units', stock: 100, rating: 5.0, image: '🍇', category: 'dates', route: 'Tunisia → EU/GCC', isDemo: false },  { id: 34, name: 'Rosemary Essential Oil', nameAr: 'زيت إكليل الجبل', seller: 'Baya Farms', country: '🇹🇳 Tunisia', priceUSD: 18, unit: '100ml', minOrder: '20 units', stock: 80, rating: 5.0, image: '🌿', category: 'oils', route: 'Tunisia → EU/GCC', isDemo: false },
+  { id: 35, name: 'Carob Powder', nameAr: 'مسحوق الخروب', seller: 'Baya Farms', country: '🇹🇳 Tunisia', priceUSD: 4.5, unit: '1kg', minOrder: '30 units', stock: 100, rating: 5.0, image: '🍫', category: 'spices', route: 'Tunisia → EU/GCC', isDemo: false },
+  { id: 36, name: 'Carob Seeds (Gum)', nameAr: 'لب الخروب', seller: 'Baya Farms', country: '🇹🇳 Tunisia', priceUSD: 9, unit: '1kg', minOrder: '20 units', stock: 60, rating: 5.0, image: '🌰', category: 'spices', route: 'Tunisia → EU/GCC', isDemo: false },
+  { id: 37, name: 'Natural Fruit Juice', nameAr: 'عصير فواكه طبيعي', seller: 'Baya Farms', country: '🇹🇳 Tunisia', priceUSD: 3.5, unit: '1L bottle', minOrder: '50 units', stock: 150, rating: 5.0, image: '🧃', category: 'honey', route: 'Tunisia → EU/GCC', isDemo: false },
 ];
 
 const products = [
