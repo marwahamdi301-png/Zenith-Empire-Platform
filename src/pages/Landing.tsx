@@ -67,7 +67,7 @@ export default function Landing() {
             { icon: "🫒", title: "تسوية الصادرات", desc: "زيت زيتون تونسي، تمور، زعفران — تسوية فورية بـ ZENITH", color: "from-green-500/20 to-emerald-500/20", border: "border-green-500/20" },
             { icon: "π", title: "Pi Network Bridge", desc: "حوّل Pi إلى ZENITH وادخل أسواق التداول الحقيقية عبر Pi Sign-in 2026", color: "from-purple-500/20 to-pink-500/20", border: "border-purple-500/20" },
             { icon: "🛡️", title: "PiVerify KYC", desc: "تحقق من هويتك كـ Pioneer موثّق للوصول للميزات المتقدمة", color: "from-blue-500/20 to-cyan-500/20", border: "border-blue-500/20" },
-            { icon: "💎", title: "Staking حتى 100%", desc: "استثمر ZENITH واكسب حتى 100% APY على مدى 365 يوم", color: "from-yellow-500/20 to-orange-500/20", border: "border-yellow-500/20" },
+            { icon: "💎", title: "Staking", desc: "اربح مكافآت ZENITH مقابل تجميد رصيدك — النسبة تعتمد على مدة القفل", color: "from-yellow-500/20 to-orange-500/20", border: "border-yellow-500/20" },
             { icon: "🛒", title: "Marketplace أفريقي", desc: "32+ منتج من 6 دول — زيوت، بهارات، تمور، سجاد بربري", color: "from-red-500/20 to-orange-500/20", border: "border-red-500/20" },
           ].map(f => (
             <div key={f.title} className={`bg-gradient-to-r ${f.color} border ${f.border} rounded-2xl p-4 flex gap-4 items-start`}>
@@ -126,7 +126,7 @@ export default function Landing() {
           <div className="flex justify-center gap-6 text-xs text-gray-400">
             <span>✅ Open Source</span>
             <span>✅ On-Chain</span>
-            <span>✅ No Admin Keys</span>
+            <span>🔑 Multi-Sig قيد التطوير</span>
           </div>
         </div>
       </section>
